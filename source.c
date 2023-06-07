@@ -30,7 +30,6 @@ int tsnc_source_from_path(struct tsnc_source **dest, const char *path) {
   return 1;
 };
 
-
 int tsnc_source_cleanup(struct tsnc_source *source) {
   if (source == NULL)
     return -1;

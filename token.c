@@ -8,10 +8,6 @@
   (ch >= 'A' && a <= 'Z') && (ch >= 'a' && ch < 'z')
 #define tsnc_char_is_numb(ch) (ch >= '0' && a <= '9')
 
-// TODO: expand the buffer if does not fit
-#define tsnc_token_stream_place(tstream, token) \
-  tstream->tokens[tstream->curs++] = token
-
 static int tsnc_token_fp_lookahead_cmp(FILE *fp, char *str) {
   size_t len = strlen(str);
   char buf[len];
@@ -26,8 +22,8 @@ static int tsnc_token_fp_lookahead_cmp(FILE *fp, char *str) {
   return memcmp(buf, str, len) == 0;
 }
 
-static void tsnc_token_from_fpn(struct tsnc_token **dest, FILE *fp,
-    int kind, size_t pos, size_t len) {
+static void tsnc_token_from_fpn(struct tsnc_token **dest,
+    FILE *fp, int kind, size_t pos, size_t len) {
 
   struct tsnc_token *token;
   char *mem;
@@ -49,18 +45,16 @@ static void tsnc_token_from_fpn(struct tsnc_token **dest, FILE *fp,
   *dest = token;
 }
 
-static void tsnc_token_stream_pprint(struct tsnc_token_stream *tstream) {
-  size_t i;
+static void tsnc_token_vector_pprint(struct tsnc_vector *tokenv) {
+  struct tsnc_token *token;
 
-  for(i = 0; i < tstream->curs; i++) {
-    struct tsnc_token *token = tstream->tokens[i];
+  while ((token = tsnc_vector_iter(tokenv, sizeof(struct tsnc_vector))))
     printf("token[%d:%zu,%zu]: %s\n",
         token->kind, token->pos, token->end, token->ptr);
-  }
 }
 
 static int tsnc_token_fp_seek_next(struct tsnc_token **dest, FILE *fp) {
-  size_t pos;
+  size_t pos=0;
   char ch;
 
   while ((ch = fgetc(fp)) != EOF) {
@@ -71,7 +65,7 @@ static int tsnc_token_fp_seek_next(struct tsnc_token **dest, FILE *fp) {
       case '\n':
         continue;
       case TSNC_TOKEN_DOUBLE_QUOTE:
-      case TSNC_TOKEN_SIGNLE_QUOTE:
+      case TSNC_TOKEN_SINGLE_QUOTE:
       case TSNC_TOKEN_HASHTAG:
       case TSNC_TOKEN_DOLLAR_SIGN:
       case TSNC_TOKEN_ROUND_BRACKET_OPEN:
@@ -208,19 +202,19 @@ static int tsnc_token_fp_seek_next(struct tsnc_token **dest, FILE *fp) {
 }
 
 int tsnc_tokenize_source(struct tsnc_source *source) {
-  size_t curs=0;
-  struct tsnc_token_stream *tstream;
+  struct tsnc_vector *tokenv;
   struct tsnc_token *token;
 
-  // FIXME: this should be dynamic
-  tstream = (struct tsnc_token_stream*)malloc(sizeof(struct tsnc_token_stream));
-  assert(tstream && "Unable to allocate memory for token stream");
+  tokenv = (struct tsnc_vector*)malloc(sizeof(struct tsnc_vector));
+  assert(tokenv && "Unable to allocate memory for token vector");
+
+  tsnc_vector_init(tokenv);
 
   while (tsnc_token_fp_seek_next(&token, source->fp)) {
-    tsnc_token_stream_place(tstream, token);
+    tsnc_vector_add(tokenv, token, sizeof(struct tsnc_token));
   }
 
-  tsnc_token_stream_pprint(tstream);
-
+  source->tokenv = tokenv;
+  tsnc_token_vector_pprint(tokenv);
   return 1;
 }

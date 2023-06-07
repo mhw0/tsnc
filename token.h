@@ -1,11 +1,12 @@
 #ifndef TSNC_TOKEN_H
 #define TSNC_TOKEN_H
 #include "source.h"
+#include "vector.h"
 
 enum tsnc_token_kind {
   TSNC_TOKEN_EXCLAMATION_MARK                             = '!',
   TSNC_TOKEN_DOUBLE_QUOTE                                 = '"',
-  TSNC_TOKEN_SIGNLE_QUOTE                                 = '\'',
+  TSNC_TOKEN_SINGLE_QUOTE                                 = '\'',
   TSNC_TOKEN_HASHTAG                                      = '#',
   TSNC_TOKEN_ASPERAND                                     = '@',
   TSNC_TOKEN_DOLLAR_SIGN                                  = '$',
@@ -40,7 +41,7 @@ enum tsnc_token_kind {
   TSNC_TOKEN_EXCLAMATION_MARK_EQUAL_EQUAL,                // !==
   TSNC_TOKEN_CARET_EQUAL,                                 // ^=
   TSNC_TOKEN_ASTERISK_EQUAL,                              // *=
-  TSNC_TOKEN_AMPERSAND_EQUAL,                              // *=
+  TSNC_TOKEN_AMPERSAND_EQUAL,                             // *=
   TSNC_TOKEN_ASTERISK_ASTERISK_EQUAL,                     // **=
   TSNC_TOKEN_SLASH_EQUAL,                                 // /=
   TSNC_TOKEN_PLUS_PLUS,                                   // ++
@@ -64,12 +65,6 @@ struct tsnc_token {
   char *ptr;
   size_t pos;
   size_t end;
-};
-
-struct tsnc_token_stream {
-  struct tsnc_token *tokens[1024]; // FIXME
-  size_t curs;
-  size_t len;
 };
 
 int tsnc_tokenize_source(struct tsnc_source *source);

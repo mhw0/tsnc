@@ -6,7 +6,7 @@
 struct tsnc_source {
   char *path;
   FILE *fp;
-  struct tsnc_token_stream *tstream;
+  struct tsnc_vector *tokenv;
 };
 
 int tsnc_source_from_path(struct tsnc_source **dest, const char *path);

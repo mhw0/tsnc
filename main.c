@@ -1,5 +1,6 @@
 #include "source.h"
 #include "token.h"
+#include "vector.h"
 
 int main(void) {
   struct tsnc_source *source;
