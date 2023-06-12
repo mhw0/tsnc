@@ -3,7 +3,7 @@
 #include <string.h> // memcpy
 #include "vector.h"
 
-#define TSNC_VECTOR_INIT_SIZE 1024
+#define TSNC_VECTOR_INIT_SIZE 4194304
 
 void tsnc_vector_init(struct tsnc_vector *vec) {
   vec->data = malloc(TSNC_VECTOR_INIT_SIZE);

@@ -1,7 +1,9 @@
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
+#include <assert.h> // assert
+#include <stdlib.h> // malloc, free
+#include <string.h> // strlen, memcpy
 #include "source.h"
+#include "vector.h"
+#include "report.h"
 
 int tsnc_source_from_path(struct tsnc_source **dest, const char *path) {
   struct tsnc_source *source;
@@ -37,4 +39,10 @@ int tsnc_source_cleanup(struct tsnc_source *source) {
   fclose(source->fp);
   free(source->path);
   return 1;
+}
+
+void tsnc_source_report(struct tsnc_source *source, int kind,
+    size_t pos, size_t end, char *message) {
+  struct tsnc_report report = {.kind=kind, .message=message, .pos=pos, .end=end};
+  tsnc_vector_add(source->reportv, &report, sizeof(struct tsnc_report));
 }
