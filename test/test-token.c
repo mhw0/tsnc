@@ -334,15 +334,18 @@ void tsnc_test_tokenizer_number_hex() {
   struct tsnc_report report, exreport;
 
   tsnc_source_memory_create(&source,
-      "0xabcdef0123456789 0xkk 0x", -1);
+      "0xabcdef0123456789 0XFF 0xkk 0x", -1);
 
   tsnc_source_compile(&source);
 
   ok(tsnc_vector_size(&source.tokenv,
-      sizeof(struct tsnc_token)) == 1, "Hex token vector size is 1");
+      sizeof(struct tsnc_token)) == 2, "Hexadecimal token vector size is 2");
 
   ok(tsnc_vector_size(&source.reportv,
-      sizeof(struct tsnc_report)) == 2, "Hex report vector size is 2");
+      sizeof(struct tsnc_report)) == 2, "Hexadecimal report vector size is 2");
+
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 0);
 
   extoken.kind = TSNC_TOKEN_KIND_NUMBER;
   extoken.startpos = 0; extoken.endpos = 17;
@@ -351,8 +354,15 @@ void tsnc_test_tokenizer_number_hex() {
       sizeof(struct tsnc_token), 0);
   ok(tsnc_token_equal(&token, &extoken), "token: 0xabcdef0123456789");
 
+  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  extoken.startpos = 19; extoken.endpos = 22;
+  extoken.str = "0XFF";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 1);
+  ok(tsnc_token_equal(&token, &extoken), "token: 0XFF");
+
   exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 19; exreport.endpos = 22;
+  exreport.startpos = 24; exreport.endpos = 27;
   exreport.message = "Invalid hexadecimal literal";
   tsnc_vector_at(&report, &source.reportv,
       sizeof(struct tsnc_report), 0);
@@ -360,7 +370,7 @@ void tsnc_test_tokenizer_number_hex() {
       "Invalid hexadecimal literal error for: 0xkk");
 
   exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 24; exreport.endpos = 25;
+  exreport.startpos = 29; exreport.endpos = 30;
   exreport.message = "Invalid hexadecimal literal";
   tsnc_vector_at(&report, &source.reportv,
       sizeof(struct tsnc_report), 1);
@@ -376,12 +386,12 @@ void tsnc_test_tokenizer_number_bin() {
   struct tsnc_report report, exreport;
 
   tsnc_source_memory_create(&source,
-      "0b1100101 0b123abc 0b", -1);
+      "0b1100101 0B1001 0b123abc 0b", -1);
 
   tsnc_source_compile(&source);
 
   ok(tsnc_vector_size(&source.tokenv,
-      sizeof(struct tsnc_token)) == 1, "Bin token vector size is 1");
+      sizeof(struct tsnc_token)) == 2, "Bin token vector size is 2");
 
   ok(tsnc_vector_size(&source.reportv,
       sizeof(struct tsnc_report)) == 2, "Bin report vector size is 2");
@@ -393,8 +403,15 @@ void tsnc_test_tokenizer_number_bin() {
       sizeof(struct tsnc_token), 0);
   ok(tsnc_token_equal(&token, &extoken), "token: 0b1100101");
 
+  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  extoken.startpos = 10; extoken.endpos = 15;
+  extoken.str = "0B1001";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 1);
+  ok(tsnc_token_equal(&token, &extoken), "token: 0B1001");
+
   exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 10; exreport.endpos = 17;
+  exreport.startpos = 17; exreport.endpos = 24;
   exreport.message = "Invalid binary number literal";
   tsnc_vector_at(&report, &source.reportv,
       sizeof(struct tsnc_report), 0);
@@ -402,7 +419,7 @@ void tsnc_test_tokenizer_number_bin() {
       "Invalid binary number literal error for: 0b123abc");
 
   exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 19; exreport.endpos = 20;
+  exreport.startpos = 26; exreport.endpos = 27;
   exreport.message = "Invalid binary number literal";
   tsnc_vector_at(&report, &source.reportv,
       sizeof(struct tsnc_report), 1);
@@ -418,12 +435,12 @@ void tsnc_test_tokenizer_number_octal() {
   struct tsnc_report report, exreport;
 
   tsnc_source_memory_create(&source,
-      "0o1234567 0o899 0o", -1);
+      "0o1234567 0O1234 0o899 0o", -1);
 
   tsnc_source_compile(&source);
 
   ok(tsnc_vector_size(&source.tokenv,
-      sizeof(struct tsnc_token)) == 1, "Octal token vector size is 1");
+      sizeof(struct tsnc_token)) == 2, "Octal token vector size is 2");
 
   ok(tsnc_vector_size(&source.reportv,
       sizeof(struct tsnc_report)) == 2, "Octal report vector size is 2");
@@ -435,8 +452,15 @@ void tsnc_test_tokenizer_number_octal() {
       sizeof(struct tsnc_token), 0);
   ok(tsnc_token_equal(&token, &extoken), "token: 0o1234567");
 
+  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  extoken.startpos = 10; extoken.endpos = 15;
+  extoken.str = "0O1234";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 1);
+  ok(tsnc_token_equal(&token, &extoken), "token: 0O1234");
+
   exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 10; exreport.endpos = 14;
+  exreport.startpos = 17; exreport.endpos = 21;
   exreport.message = "Invalid octal number literal";
   tsnc_vector_at(&report, &source.reportv,
       sizeof(struct tsnc_report), 0);
@@ -444,7 +468,7 @@ void tsnc_test_tokenizer_number_octal() {
       "Invalid octal number literal error for: 0o899");
 
   exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 16; exreport.endpos = 17;
+  exreport.startpos = 23; exreport.endpos = 24;
   exreport.message = "Invalid octal number literal";
   tsnc_vector_at(&report, &source.reportv,
       sizeof(struct tsnc_report), 1);

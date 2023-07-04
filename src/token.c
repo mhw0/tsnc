@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <tsnc/token.h>
 
 int tsnc_token_create(struct tsnc_token *dest,
@@ -62,6 +63,15 @@ static int tsnc_tokenize_source_string(struct tsnc_token *dest,
   return 1;
 }
 
+/**
+ * HexIntegerLiteral ::
+ *   0x HexDigit
+ *   0X HexDigit
+ *   HexIntegerLiteral HexDigit
+ *
+ *   HexDigit :: one of
+ *   0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F
+ */
 static int tsnc_tokenize_number_hex(struct tsnc_token *dest,
     struct tsnc_source *source) {
   FILE *srcfp = source->fp;
@@ -70,11 +80,7 @@ static int tsnc_tokenize_number_hex(struct tsnc_token *dest,
 
   startpos = ftell(srcfp);
 
-  if (fgetc(srcfp) != '0' || fgetc(srcfp) != 'x') {
-    fseek(srcfp, -2, SEEK_CUR);
-    return 0;
-  }
-
+  fseek(srcfp, 2, SEEK_CUR);
   charscnt += 2;
 
   while ((currch = fgetc(srcfp)) && currch != ' ' && currch != EOF) {
@@ -112,6 +118,20 @@ static int tsnc_tokenize_number_hex(struct tsnc_token *dest,
   return 1;
 }
 
+/**
+ * TODO: ES6 feature
+ *
+ * BinaryIntegerLiteral ::
+ *   0b BinaryDigits
+ *   0B BinaryDigits
+ *
+ * BinaryDigits ::
+ *   BinaryDigit
+ *   BinaryDigits BinaryDigit
+ *
+ * BinaryDigit :: one of
+ *   0 1
+ */
 static int tsnc_tokenize_number_bin(struct tsnc_token *dest,
     struct tsnc_source *source) {
   FILE *srcfp = source->fp;
@@ -120,11 +140,7 @@ static int tsnc_tokenize_number_bin(struct tsnc_token *dest,
 
   startpos = ftell(srcfp);
 
-  if (fgetc(srcfp) != '0' || fgetc(srcfp) != 'b') {
-    fseek(srcfp, startpos, SEEK_SET);
-    return 0;
-  }
-
+  fseek(srcfp, 2, SEEK_CUR);
   charscnt += 2;
 
   while ((currch = fgetc(srcfp)) && currch != ' ' && currch != EOF) {
@@ -161,6 +177,14 @@ static int tsnc_tokenize_number_bin(struct tsnc_token *dest,
   return 1;
 }
 
+/**
+ * OctalIntegerLiteral ::
+ *   0 OctalDigit
+ *   OctalIntegerLiteral OctalDigit
+ *
+ * OctalDigit :: one of
+ *   0 1 2 3 4 5 6 7
+ */
 static int tsnc_tokenize_number_octal(struct tsnc_token *dest,
     struct tsnc_source *source) {
   FILE *srcfp = source->fp;
@@ -169,11 +193,7 @@ static int tsnc_tokenize_number_octal(struct tsnc_token *dest,
 
   startpos = ftell(srcfp);
 
-  if (fgetc(srcfp) != '0' || fgetc(srcfp) != 'o') {
-    fseek(srcfp, startpos, SEEK_SET);
-    return 0;
-  }
-
+  fseek(srcfp, 2, SEEK_CUR);
   charscnt += 2;
 
   while ((currch = fgetc(srcfp)) && currch != ' ' && currch != EOF) {
@@ -221,21 +241,21 @@ static int tsnc_tokenize_number(struct tsnc_token *dest,
   startpos = ftell(srcfp);
 
   // 0x...
-  if (fgetc(srcfp) == '0' && fgetc(srcfp) == 'x') {
+  if (fgetc(srcfp) == '0' && tolower(fgetc(srcfp)) == 'x') {
     fseek(srcfp, startpos, SEEK_SET);
     return tsnc_tokenize_number_hex(dest, source);
   }
 
   // 0b...
   fseek(srcfp, startpos, SEEK_SET);
-  if (fgetc(srcfp) == '0' && fgetc(srcfp) == 'b') {
+  if (fgetc(srcfp) == '0' && tolower(fgetc(srcfp)) == 'b') {
     fseek(srcfp, startpos, SEEK_SET);
     return tsnc_tokenize_number_bin(dest, source);
   }
 
   // 0o...
   fseek(srcfp, startpos, SEEK_SET);
-  if (fgetc(srcfp) == '0' && fgetc(srcfp) == 'o') {
+  if (fgetc(srcfp) == '0' && tolower(fgetc(srcfp)) == 'o') {
     fseek(srcfp, startpos, SEEK_SET);
     return tsnc_tokenize_number_octal(dest, source);
   }
