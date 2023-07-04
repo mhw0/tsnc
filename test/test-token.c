@@ -327,3 +327,45 @@ void tsnc_test_tokenizer_string() {
 
   tsnc_source_cleanup(&source);
 }
+
+void tsnc_test_tokenizer_number_hex() {
+  struct tsnc_source source;
+  struct tsnc_token token, extoken;
+  struct tsnc_report report, exreport;
+
+  tsnc_source_memory_create(&source,
+      "0xabcdef0123456789 0xkk 0x", -1);
+
+  tsnc_source_compile(&source);
+
+  ok(tsnc_vector_size(&source.tokenv,
+      sizeof(struct tsnc_token)) == 1, "Hex token vector size is 1");
+
+  ok(tsnc_vector_size(&source.reportv,
+      sizeof(struct tsnc_report)) == 2, "Hex report vector size is 2");
+
+  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  extoken.startpos = 0; extoken.endpos = 17;
+  extoken.str = "0xabcdef0123456789";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 0);
+  ok(tsnc_token_equal(&token, &extoken), "token: 0xabcdef0123456789");
+
+  exreport.kind = TSNC_REPORT_KIND_ERROR;
+  exreport.startpos = 19; exreport.endpos = 22;
+  exreport.message = "Invalid hexadecimal literal";
+  tsnc_vector_at(&report, &source.reportv,
+      sizeof(struct tsnc_report), 0);
+  ok(tsnc_report_equal(&report, &exreport),
+      "Invalid hexadecimal literal error for: 0xkk");
+
+  exreport.kind = TSNC_REPORT_KIND_ERROR;
+  exreport.startpos = 24; exreport.endpos = 25;
+  exreport.message = "Invalid hexadecimal literal";
+  tsnc_vector_at(&report, &source.reportv,
+      sizeof(struct tsnc_report), 1);
+  ok(tsnc_report_equal(&report, &exreport),
+      "Invalid hexadecimal literal error for: 0x");
+
+  tsnc_source_cleanup(&source);
+}

@@ -62,6 +62,130 @@ static int tsnc_tokenize_source_string(struct tsnc_token *dest,
   return 1;
 }
 
+static int tsnc_tokenize_number_hex(struct tsnc_token *dest,
+    struct tsnc_source *source) {
+  FILE *srcfp = source->fp;
+  size_t startpos=0, charscnt=0, hexcharscnt=0;
+  char currch, *hexbuf;
+
+  startpos = ftell(srcfp);
+
+  if (fgetc(srcfp) != '0' || fgetc(srcfp) != 'x') {
+    fseek(srcfp, -2, SEEK_CUR);
+    return 0;
+  }
+
+  charscnt += 2;
+
+  while ((currch = fgetc(srcfp)) && currch != ' ' && currch != EOF) {
+    if ((currch >= 'a' && currch <= 'f')
+        || (currch >= 'A' && currch <= 'F')
+        || (currch >= '0' && currch <= '9')) {
+      hexcharscnt++;
+      continue;
+    }
+
+    charscnt++;
+  }
+
+  if (hexcharscnt == 0 || charscnt > 2) {
+    tsnc_source_report_error(source, startpos, startpos + charscnt - 1,
+        "Invalid hexadecimal literal", NULL);
+    return 0;
+  }
+
+  charscnt = hexcharscnt + charscnt;
+
+  hexbuf = (char*)malloc(charscnt + 1);
+  assert(hexbuf && "Unable to allocate memory for hex number token");
+
+  fseek(srcfp, startpos, SEEK_SET);
+  fread(hexbuf, sizeof(char), charscnt, srcfp);
+  hexbuf[charscnt] = '\0';
+
+  fseek(srcfp, startpos + charscnt, SEEK_SET);
+
+  dest->kind = TSNC_TOKEN_KIND_NUMBER;
+  dest->startpos = startpos;
+  dest->endpos = startpos + charscnt - 1;
+  dest->str = hexbuf;
+  return 1;
+}
+
+static int tsnc_tokenize_number_bin(struct tsnc_token *dest,
+    struct tsnc_source *source) {
+  (void)dest;
+  (void)source;
+  return 0;
+}
+
+static int tsnc_tokenize_number_octal(struct tsnc_token *dest,
+    struct tsnc_source *source) {
+  (void)dest;
+  (void)source;
+  return 0;
+}
+
+// 0123 123 123.456 .456 123n 0xff 0b111111
+static int tsnc_tokenize_number(struct tsnc_token *dest,
+    struct tsnc_source *source) {
+  size_t charscnt = 0, currpos = 0, startpos = 0;
+  FILE *srcfp = source->fp;
+  int decpoint = 0;
+  char currch, *numbuf;
+
+  startpos = ftell(srcfp);
+
+  // 0x...
+  if (fgetc(srcfp) == '0' && fgetc(srcfp) == 'x') {
+    fseek(srcfp, startpos, SEEK_SET);
+    return tsnc_tokenize_number_hex(dest, source);
+  }
+
+  // 0b...
+  fseek(srcfp, startpos, SEEK_SET);
+  if (fgetc(srcfp) == '0' && fgetc(srcfp) == 'b') {
+    fseek(srcfp, startpos, SEEK_SET);
+    return tsnc_tokenize_number_bin(dest, source);
+  }
+
+  // 0o...
+  fseek(srcfp, startpos, SEEK_SET);
+  if (fgetc(srcfp) == '0' && fgetc(srcfp) == 'o') {
+    fseek(srcfp, startpos, SEEK_SET);
+    return tsnc_tokenize_number_octal(dest, source);
+  }
+
+  fseek(srcfp, startpos, SEEK_SET);
+  while ((currch = fgetc(srcfp)) != EOF && currch != '\n') {
+    currpos = ftell(srcfp);
+
+    if (decpoint == 1 && currch == '.') {
+      tsnc_source_report_error(source, startpos, currpos,
+          "Invalid number", NULL);
+      return 0;
+    }
+
+    if (decpoint == 0 && currch == '.')
+      decpoint = 1;
+
+    charscnt++;
+  }
+
+  numbuf = (char*)malloc(charscnt + 1);
+  assert(numbuf && "Unable to allocate memory for number token");
+
+  fseek(srcfp, startpos, SEEK_SET);
+  fread(numbuf, sizeof(char), charscnt, srcfp);
+
+  dest->kind = TSNC_TOKEN_KIND_NUMBER;
+  dest->startpos = startpos;
+  dest->endpos = startpos + charscnt;
+  dest->str = numbuf;
+
+  return 1;
+}
+
 static int tsnc_token_source_next(struct tsnc_token *dest,
     struct tsnc_source *source) {
   char currch, tokbuf[4];
@@ -91,7 +215,18 @@ static int tsnc_token_source_next(struct tsnc_token *dest,
       case '4': case '5':
       case '6': case '7':
       case '8': case '9':
-        // 1234, 1234n, 1.234, .333
+        fseek(srcfp, startpos, SEEK_SET);
+        if (tsnc_tokenize_number(dest, source))
+          return 1;
+        break;
+
+        // 0b22test
+      case '.':
+        currch = fgetc(srcfp);
+        if (currch >= '0' && currch <= '9') {
+          fseek(srcfp, -1, SEEK_CUR);
+          return tsnc_tokenize_number(dest, source);
+        }
         break;
       case '"':
       case '\'':
@@ -485,14 +620,13 @@ int tsnc_token_cleanup(struct tsnc_token *token) {
 }
 
 int tsnc_tokenv_cleanup(struct tsnc_vector *tokenv) {
-  struct tsnc_token *token;
+  struct tsnc_token token;
 
   if (tokenv == NULL)
     return 0;
 
-  while ((token = tsnc_vector_iter(tokenv,
-      sizeof(struct tsnc_token)))) {
-    tsnc_token_cleanup(token);
+  while (tsnc_vector_iter(&token, tokenv, sizeof(struct tsnc_token))) {
+    tsnc_token_cleanup(&token);
   }
 
   return 1;

@@ -59,7 +59,7 @@ int tsnc_source_compile(struct tsnc_source *source) {
 }
 
 int tsnc_source_cleanup(struct tsnc_source *source) {
-  struct tsnc_token *token;
+  struct tsnc_token token;
   
   if (source == NULL)
     return 0;
@@ -70,9 +70,9 @@ int tsnc_source_cleanup(struct tsnc_source *source) {
   if (source->path != NULL)
     free(source->path);
   
-  while ((token = tsnc_vector_iter(&source->tokenv,
-        sizeof(struct tsnc_token)))) {
-    tsnc_token_cleanup(token);
+  while (tsnc_vector_iter(&token, &source->tokenv,
+        sizeof(struct tsnc_token))) {
+    tsnc_token_cleanup(&token);
   }
   
   return 0;
@@ -94,5 +94,6 @@ void tsnc_source_report(struct tsnc_source *source,
   report.endpos = endpos;
   report.message = fmtmsg;
 
-  tsnc_vector_push(&source->reportv, sizeof(struct tsnc_report), &report);
+  tsnc_vector_push(&source->reportv,
+      sizeof(struct tsnc_report), &report);
 }

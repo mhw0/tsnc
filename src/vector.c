@@ -28,17 +28,19 @@ int tsnc_vector_push(struct tsnc_vector *vector,
 	return 1;
 }
 
-void *tsnc_vector_iter(struct tsnc_vector *vector, size_t size) {
-  void *ret;
+int tsnc_vector_iter(void *dest, struct tsnc_vector *vector,
+    size_t size) {
+  uint8_t *curptr;
 
   if (vector->icurs * size < vector->curs) {
-		ret = ((uint8_t*)vector->buf) + vector->icurs * size;
+    curptr = ((uint8_t*)vector->buf) + vector->icurs * size;
+    memcpy(dest, curptr, size);
     vector->icurs++;
-    return ret;
+    return 1;
   }
 
   vector->icurs = 0;
-  return NULL;
+  return 0;
 }
 
 int tsnc_vector_at(void *dest, struct tsnc_vector *vector,

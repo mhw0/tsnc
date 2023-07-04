@@ -19,7 +19,8 @@ struct tsnc_vector {
 };
 
 int tsnc_vector_create(struct tsnc_vector *dest);
-void *tsnc_vector_iter(struct tsnc_vector *vector, size_t size);
+int tsnc_vector_iter(void *dest, struct tsnc_vector *vector,
+    size_t size);
 int tsnc_vector_at(void *dest, struct tsnc_vector *vector,
 		size_t size, size_t index);
 int tsnc_vector_push(struct tsnc_vector *vector,
