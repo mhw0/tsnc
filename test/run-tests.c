@@ -21,6 +21,9 @@ int main(void) {
   diag("tokenizer octal number");
   tsnc_test_tokenizer_number_octal();
 
+  diag("tokenizer keywords");
+  tsnc_test_tokenizer_keywords();
+
   done_testing();
   return 0;
 }

@@ -5,3 +5,4 @@ void tsnc_test_tokenizer_number();
 void tsnc_test_tokenizer_number_hex();
 void tsnc_test_tokenizer_number_bin();
 void tsnc_test_tokenizer_number_octal();
+void tsnc_test_tokenizer_keywords();

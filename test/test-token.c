@@ -453,3 +453,354 @@ void tsnc_test_tokenizer_number_octal() {
 
   tsnc_source_cleanup(&source);
 }
+
+void tsnc_test_tokenizer_keywords() {
+  struct tsnc_source source;
+  struct tsnc_token token, extoken;
+  struct tsnc_report report, exreport;
+
+  tsnc_source_memory_create(&source,
+      "break case catch class const continue "
+      "debugger default delete do else enum "
+      "export extends false finally for function "
+      "if import in instanceof new null return "
+      "super switch this throw true try typeof var "
+      "void while with implements interface let "
+      "package private protected public static yield", -1);
+
+  tsnc_source_compile(&source);
+
+  ok(tsnc_vector_size(&source.tokenv,
+      sizeof(struct tsnc_report)) == 45, "Keyword vector size is 45");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 0; extoken.endpos = 4;
+  extoken.str = "break";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 0);
+  ok(tsnc_token_equal(&token, &extoken), "token: break");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 6; extoken.endpos = 9;
+  extoken.str = "case";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 1);
+  ok(tsnc_token_equal(&token, &extoken), "token: case");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 11; extoken.endpos = 15;
+  extoken.str = "catch";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 2);
+  ok(tsnc_token_equal(&token, &extoken), "token: catch");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 17; extoken.endpos = 21;
+  extoken.str = "class";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 3);
+  ok(tsnc_token_equal(&token, &extoken), "token: class");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 23; extoken.endpos = 27;
+  extoken.str = "const";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 4);
+  ok(tsnc_token_equal(&token, &extoken), "token: const");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 29; extoken.endpos = 36;
+  extoken.str = "continue";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 5);
+  ok(tsnc_token_equal(&token, &extoken), "token: continue");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 38; extoken.endpos = 45;
+  extoken.str = "debugger";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 6);
+  ok(tsnc_token_equal(&token, &extoken), "token: debugger");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 47; extoken.endpos = 53;
+  extoken.str = "default";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 7);
+  ok(tsnc_token_equal(&token, &extoken), "token: default");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 55; extoken.endpos = 60;
+  extoken.str = "delete";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 8);
+  ok(tsnc_token_equal(&token, &extoken), "token: delete");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 62; extoken.endpos = 63;
+  extoken.str = "do";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 9);
+  ok(tsnc_token_equal(&token, &extoken), "token: do");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 65; extoken.endpos = 68;
+  extoken.str = "else";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 10);
+  ok(tsnc_token_equal(&token, &extoken), "token: else");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 70; extoken.endpos = 73;
+  extoken.str = "enum";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 11);
+  ok(tsnc_token_equal(&token, &extoken), "token: enum");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 75; extoken.endpos = 80;
+  extoken.str = "export";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 12);
+  ok(tsnc_token_equal(&token, &extoken), "token: export");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 82; extoken.endpos = 88;
+  extoken.str = "extends";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 13);
+  ok(tsnc_token_equal(&token, &extoken), "token: extends");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 90; extoken.endpos = 94;
+  extoken.str = "false";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 14);
+  ok(tsnc_token_equal(&token, &extoken), "token: false");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 96; extoken.endpos = 102;
+  extoken.str = "finally";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 15);
+  ok(tsnc_token_equal(&token, &extoken), "token: finally");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 104; extoken.endpos = 106;
+  extoken.str = "for";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 16);
+  ok(tsnc_token_equal(&token, &extoken), "token: for");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 108; extoken.endpos = 115;
+  extoken.str = "function";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 17);
+  ok(tsnc_token_equal(&token, &extoken), "token: function");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 117; extoken.endpos = 118;
+  extoken.str = "if";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 18);
+  ok(tsnc_token_equal(&token, &extoken), "token: if");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 120; extoken.endpos = 125;
+  extoken.str = "import";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 19);
+  ok(tsnc_token_equal(&token, &extoken), "token: import");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 127; extoken.endpos = 128;
+  extoken.str = "in";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 20);
+  ok(tsnc_token_equal(&token, &extoken), "token: in");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 130; extoken.endpos = 139;
+  extoken.str = "instanceof";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 21);
+  ok(tsnc_token_equal(&token, &extoken), "token: instanceof");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 141; extoken.endpos = 143;
+  extoken.str = "new";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 22);
+  ok(tsnc_token_equal(&token, &extoken), "token: new");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 145; extoken.endpos = 148;
+  extoken.str = "null";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 23);
+  ok(tsnc_token_equal(&token, &extoken), "token: null");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 150; extoken.endpos = 155;
+  extoken.str = "return";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 24);
+  ok(tsnc_token_equal(&token, &extoken), "token: return");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 157; extoken.endpos = 161;
+  extoken.str = "super";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 25);
+  ok(tsnc_token_equal(&token, &extoken), "token: super");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 163; extoken.endpos = 168;
+  extoken.str = "switch";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 26);
+  ok(tsnc_token_equal(&token, &extoken), "token: switch");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 170; extoken.endpos = 173;
+  extoken.str = "this";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 27);
+  ok(tsnc_token_equal(&token, &extoken), "token: this");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 175; extoken.endpos = 179;
+  extoken.str = "throw";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 28);
+  ok(tsnc_token_equal(&token, &extoken), "token: throw");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 181; extoken.endpos = 184;
+  extoken.str = "true";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 29);
+  ok(tsnc_token_equal(&token, &extoken), "token: true");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 186; extoken.endpos = 188;
+  extoken.str = "try";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 30);
+  ok(tsnc_token_equal(&token, &extoken), "token: try");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 190; extoken.endpos = 195;
+  extoken.str = "typeof";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 31);
+  ok(tsnc_token_equal(&token, &extoken), "token: typeof");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 197; extoken.endpos = 199;
+  extoken.str = "var";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 32);
+  ok(tsnc_token_equal(&token, &extoken), "token: var");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 201; extoken.endpos = 204;
+  extoken.str = "void";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 33);
+  ok(tsnc_token_equal(&token, &extoken), "token: void");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 206; extoken.endpos = 210;
+  extoken.str = "while";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 34);
+  ok(tsnc_token_equal(&token, &extoken), "token: while");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 206; extoken.endpos = 210;
+  extoken.str = "while";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 34);
+  ok(tsnc_token_equal(&token, &extoken), "token: while");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 212; extoken.endpos = 215;
+  extoken.str = "with";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 35);
+  ok(tsnc_token_equal(&token, &extoken), "token: with");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 217; extoken.endpos = 226;
+  extoken.str = "implements";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 36);
+  ok(tsnc_token_equal(&token, &extoken), "token: implements");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 228; extoken.endpos = 236;
+  extoken.str = "interface";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 37);
+  ok(tsnc_token_equal(&token, &extoken), "token: interface");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 228; extoken.endpos = 236;
+  extoken.str = "interface";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 37);
+  ok(tsnc_token_equal(&token, &extoken), "token: interface");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 238; extoken.endpos = 240;
+  extoken.str = "let";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 38);
+  ok(tsnc_token_equal(&token, &extoken), "token: let");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 242; extoken.endpos = 248;
+  extoken.str = "package";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 39);
+  ok(tsnc_token_equal(&token, &extoken), "token: package");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 250; extoken.endpos = 256;
+  extoken.str = "private";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 40);
+  ok(tsnc_token_equal(&token, &extoken), "token: private");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 258; extoken.endpos = 266;
+  extoken.str = "protected";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 41);
+  ok(tsnc_token_equal(&token, &extoken), "token: protected");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 268; extoken.endpos = 273;
+  extoken.str = "public";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 42);
+  ok(tsnc_token_equal(&token, &extoken), "token: public");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 275; extoken.endpos = 280;
+  extoken.str = "static";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 43);
+  ok(tsnc_token_equal(&token, &extoken), "token: static");
+
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 282; extoken.endpos = 286;
+  extoken.str = "yield";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 44);
+  ok(tsnc_token_equal(&token, &extoken), "token: yield");
+
+  tsnc_source_cleanup(&source);
+}

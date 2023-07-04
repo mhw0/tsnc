@@ -4,6 +4,23 @@
 #include <tsnc/vector.h>
 #include <tsnc/source.h>
 
+#define TSNC_TOKEN_KEYWORDS_COUNT 45
+#define TSNC_TOKEN_KEYWORDS { \
+   "break",   "case",       "catch",    "class",   \
+   "const",   "continue",   "debugger", "default", \
+   "delete",  "do",         "else",     "enum",    \
+   "export",  "extends",    "false",    "finally", \
+   "for",     "function",   "if",       "import",  \
+   "in",      "instanceof", "new",      "null",    \
+   "return",  "super",      "switch",   "this",    \
+   "throw",   "true",       "try",      "typeof",  \
+   "var",     "void",       "while",    "with",    \
+                                                   \
+   "implements", "interface", "let",    "package", \
+   "private",    "protected", "public", "static",  \
+   "yield"                                         \
+}
+
 /* token kind */
 enum tsnc_token_kind {
   TSNC_TOKEN_KIND_QUESTION_MARK                                 = '?',

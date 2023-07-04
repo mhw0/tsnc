@@ -270,6 +270,45 @@ static int tsnc_tokenize_number(struct tsnc_token *dest,
   return 1;
 }
 
+int tsnc_token_is_keyword(const char *str) {
+  const char *keywords[] = TSNC_TOKEN_KEYWORDS;
+  int i;
+
+  for (i = 0; i < TSNC_TOKEN_KEYWORDS_COUNT; i++)
+    if (strcmp(str, keywords[i]) == 0)
+      return 1;
+
+  return 0;
+}
+
+int tsnc_tokenize_keyword(struct tsnc_token *dest,
+    struct tsnc_source *source) {
+  size_t startpos=0, charscnt=0;
+  FILE *srcfp = source->fp;
+  char currch, *kwbuf;
+
+  startpos = ftell(srcfp);
+
+  while ((currch = fgetc(srcfp)) != ' ' && currch != EOF)
+    charscnt++;
+
+  kwbuf = (char*)malloc(charscnt);
+  assert(kwbuf && "Unable to allocate memory for keyword buffer");
+
+  fseek(srcfp, startpos, SEEK_SET);
+  fread(kwbuf, sizeof(char), charscnt, srcfp);
+  kwbuf[charscnt] = '\0';
+
+  if (tsnc_token_is_keyword(kwbuf) == 0)
+    return 0;
+
+  dest->kind = TSNC_TOKEN_KIND_KEYWORD;
+  dest->startpos = startpos;
+  dest->endpos = startpos + charscnt - 1;
+  dest->str = kwbuf;
+  return 1;
+}
+
 static int tsnc_token_source_next(struct tsnc_token *dest,
     struct tsnc_source *source) {
   char currch, tokbuf[4];
@@ -303,8 +342,6 @@ static int tsnc_token_source_next(struct tsnc_token *dest,
         if (tsnc_tokenize_number(dest, source))
           return 1;
         break;
-
-        // 0b22test
       case '.':
         currch = fgetc(srcfp);
         if (currch >= '0' && currch <= '9') {
@@ -654,8 +691,12 @@ static int tsnc_token_source_next(struct tsnc_token *dest,
             &currch, 1, startpos, startpos);
         return 1;
       }
+      default: {
+        fseek(srcfp, startpos, SEEK_SET);
 
-      // TODO: add . ... .123
+        if (tsnc_tokenize_keyword(dest, source))
+          return 1;
+      }
     }
   }
 
