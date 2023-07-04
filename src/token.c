@@ -114,9 +114,51 @@ static int tsnc_tokenize_number_hex(struct tsnc_token *dest,
 
 static int tsnc_tokenize_number_bin(struct tsnc_token *dest,
     struct tsnc_source *source) {
-  (void)dest;
-  (void)source;
-  return 0;
+  FILE *srcfp = source->fp;
+  size_t startpos=0, charscnt=0, bincharscnt=0;
+  char currch, *binbuf;
+
+  startpos = ftell(srcfp);
+
+  if (fgetc(srcfp) != '0' || fgetc(srcfp) != 'b') {
+    fseek(srcfp, startpos, SEEK_SET);
+    return 0;
+  }
+
+  charscnt += 2;
+
+  while ((currch = fgetc(srcfp)) && currch != ' ' && currch != EOF) {
+    if (currch == '0' || currch == '1') {
+      bincharscnt++;
+      continue;
+    }
+
+    charscnt++;
+  }
+
+  if (bincharscnt == 0 || charscnt > 2) {
+    charscnt = bincharscnt + charscnt;
+    tsnc_source_report_error(source, startpos, startpos + charscnt - 1,
+        "Invalid binary number literal", NULL);
+    return 0;
+  }
+
+  charscnt = bincharscnt + charscnt;
+
+  binbuf = (char*)malloc(charscnt + 1);
+  assert(binbuf && "Unable to allocate memory for bin number token");
+
+  fseek(srcfp, startpos, SEEK_SET);
+  fread(binbuf, sizeof(char), charscnt, srcfp);
+  binbuf[charscnt] = '\0';
+
+  fseek(srcfp, startpos + charscnt, SEEK_SET);
+
+  dest->kind = TSNC_TOKEN_KIND_NUMBER;
+  dest->startpos = startpos;
+  dest->endpos = startpos + charscnt - 1;
+  dest->str = binbuf;
+  return 1;
 }
 
 static int tsnc_tokenize_number_octal(struct tsnc_token *dest,

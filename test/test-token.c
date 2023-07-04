@@ -369,3 +369,45 @@ void tsnc_test_tokenizer_number_hex() {
 
   tsnc_source_cleanup(&source);
 }
+
+void tsnc_test_tokenizer_number_bin() {
+  struct tsnc_source source;
+  struct tsnc_token token, extoken;
+  struct tsnc_report report, exreport;
+
+  tsnc_source_memory_create(&source,
+      "0b1100101 0b123abc 0b", -1);
+
+  tsnc_source_compile(&source);
+
+  ok(tsnc_vector_size(&source.tokenv,
+      sizeof(struct tsnc_token)) == 1, "Bin token vector size is 1");
+
+  ok(tsnc_vector_size(&source.reportv,
+      sizeof(struct tsnc_report)) == 2, "Bin report vector size is 2");
+
+  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  extoken.startpos = 0; extoken.endpos = 8;
+  extoken.str = "0b1100101";
+  tsnc_vector_at(&token, &source.tokenv,
+      sizeof(struct tsnc_token), 0);
+  ok(tsnc_token_equal(&token, &extoken), "token: 0b1100101");
+
+  exreport.kind = TSNC_REPORT_KIND_ERROR;
+  exreport.startpos = 10; exreport.endpos = 17;
+  exreport.message = "Invalid binary number literal";
+  tsnc_vector_at(&report, &source.reportv,
+      sizeof(struct tsnc_report), 0);
+  ok(tsnc_report_equal(&report, &exreport),
+      "Invalid binary number literal error for: 0b123abc");
+
+  exreport.kind = TSNC_REPORT_KIND_ERROR;
+  exreport.startpos = 19; exreport.endpos = 20;
+  exreport.message = "Invalid binary number literal";
+  tsnc_vector_at(&report, &source.reportv,
+      sizeof(struct tsnc_report), 1);
+  ok(tsnc_report_equal(&report, &exreport),
+      "Invalid binary number literal: 0b");
+
+  tsnc_source_cleanup(&source);
+}
