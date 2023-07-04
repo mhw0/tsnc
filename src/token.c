@@ -163,9 +163,51 @@ static int tsnc_tokenize_number_bin(struct tsnc_token *dest,
 
 static int tsnc_tokenize_number_octal(struct tsnc_token *dest,
     struct tsnc_source *source) {
-  (void)dest;
-  (void)source;
-  return 0;
+  FILE *srcfp = source->fp;
+  size_t startpos=0, charscnt=0, octcharscnt=0;
+  char currch, *octbuf;
+
+  startpos = ftell(srcfp);
+
+  if (fgetc(srcfp) != '0' || fgetc(srcfp) != 'o') {
+    fseek(srcfp, startpos, SEEK_SET);
+    return 0;
+  }
+
+  charscnt += 2;
+
+  while ((currch = fgetc(srcfp)) && currch != ' ' && currch != EOF) {
+    if (currch >= '0' && currch <= '7') {
+      octcharscnt++;
+      continue;
+    }
+
+    charscnt++;
+  }
+
+  if (octcharscnt == 0 || charscnt > 2) {
+    charscnt = octcharscnt + charscnt;
+    tsnc_source_report_error(source, startpos, startpos + charscnt - 1,
+        "Invalid octal number literal", NULL);
+    return 0;
+  }
+
+  charscnt = octcharscnt + charscnt;
+
+  octbuf = (char*)malloc(charscnt + 1);
+  assert(octbuf && "Unable to allocate memory for octal number token");
+
+  fseek(srcfp, startpos, SEEK_SET);
+  fread(octbuf, sizeof(char), charscnt, srcfp);
+  octbuf[charscnt] = '\0';
+
+  fseek(srcfp, startpos + charscnt, SEEK_SET);
+
+  dest->kind = TSNC_TOKEN_KIND_NUMBER;
+  dest->startpos = startpos;
+  dest->endpos = startpos + charscnt - 1;
+  dest->str = octbuf;
+  return 1;
 }
 
 // 0123 123 123.456 .456 123n 0xff 0b111111

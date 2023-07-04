@@ -18,6 +18,9 @@ int main(void) {
   diag("tokenizer binary number");
   tsnc_test_tokenizer_number_bin();
 
+  diag("tokenizer octal number");
+  tsnc_test_tokenizer_number_octal();
+
   done_testing();
   return 0;
 }
