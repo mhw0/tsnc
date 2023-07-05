@@ -2,6 +2,10 @@
 #include <ctype.h>
 #include <tsnc/token.h>
 
+#define tsnc_is_identchar(ch) \
+  ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') \
+    || (ch >= '0' && ch <= '9') || (ch == '$' || ch == '_'))
+
 int tsnc_token_create(struct tsnc_token *dest,
     enum tsnc_token_kind kind, char *token, size_t len,
     size_t startpos, size_t endpos) {
@@ -319,13 +323,56 @@ int tsnc_tokenize_keyword(struct tsnc_token *dest,
   fread(kwbuf, sizeof(char), charscnt, srcfp);
   kwbuf[charscnt] = '\0';
 
-  if (tsnc_token_is_keyword(kwbuf) == 0)
+  if (tsnc_token_is_keyword(kwbuf) == 0) {
+    fseek(srcfp, startpos, SEEK_SET);
     return 0;
+  }
 
   dest->kind = TSNC_TOKEN_KIND_KEYWORD;
   dest->startpos = startpos;
   dest->endpos = startpos + charscnt - 1;
   dest->str = kwbuf;
+  return 1;
+}
+
+/**
+ * Identifier ::
+ *   IdentifierName but not ReservedWord
+ *
+ * IdentifierName ::
+ *   IdentifierStart
+ *   IdentifierName IdentifierPart
+ *
+ * IdentifierStart ::
+ *   UnicodeLetter
+ *   $
+ *   _
+ *   \ UnicodeEscapeSequence
+ * ...
+ */
+int tsnc_tokenize_identifier(struct tsnc_token *dest,
+    struct tsnc_source *source) {
+  FILE *srcfp = source->fp;
+  size_t startpos=0, charscnt=0;
+  char currch, *identbuf;
+
+  startpos = ftell(srcfp);
+
+  while ((currch = fgetc(srcfp)) != ' ' && currch != EOF
+      && tsnc_is_identchar(currch))
+    charscnt++;
+
+  identbuf = (char*)malloc(charscnt + 1);
+  assert(identbuf && "Unable to allocate memory for identifier buffer");
+
+  fseek(srcfp, startpos, SEEK_SET);
+  fread(identbuf, sizeof(char), charscnt, srcfp);
+  identbuf[charscnt] = '\0';
+
+  dest->kind = TSNC_TOKEN_KIND_IDENTIFIER;
+  dest->startpos = startpos;
+  dest->endpos = startpos + charscnt - 1;
+  dest->str = identbuf;
   return 1;
 }
 
@@ -712,11 +759,18 @@ static int tsnc_token_source_next(struct tsnc_token *dest,
         return 1;
       }
       default: {
-        fseek(srcfp, startpos, SEEK_SET);
+        fseek(srcfp, -1, SEEK_CUR);
 
         if (tsnc_tokenize_keyword(dest, source))
           return 1;
+
+        if (tsnc_is_identchar(currch))
+          return tsnc_tokenize_identifier(dest, source);
+
+        printf("Invalid character: %c\n", currch);
+        exit(1);
       }
+
     }
   }
 

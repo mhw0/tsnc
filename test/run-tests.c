@@ -24,6 +24,9 @@ int main(void) {
   diag("tokenizer keywords");
   tsnc_test_tokenizer_keywords();
 
+  diag("tokenizer identifiers");
+  tsnc_test_tokenizer_identifiers();
+
   done_testing();
   return 0;
 }
