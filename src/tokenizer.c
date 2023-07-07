@@ -360,10 +360,14 @@ static int tsnc_token_source_next(struct tsnc_token *dest,
   size_t startpos;
   FILE *srcfp = source->fp;
 
-  while ((currch = fgetc(srcfp)) != EOF) {
+  while ((currch = fgetc(srcfp))) {
     startpos = ftell(srcfp) - 1;
 
     switch (currch) {
+      case EOF:
+        tsnc_token_create(dest, TSNC_TOKEN_KIND_EOF, "", 0,
+            startpos, startpos);
+        return 1;
       case ' ':
       case '\n':
         continue;
@@ -764,5 +768,8 @@ void tsnc_tokenize_source(struct tsnc_source *source) {
 
   while (tsnc_token_source_next(&token, source)) {
     tsnc_token_stream_add(&source->tokens, &token);
+
+    if (token.kind == TSNC_TOKEN_KIND_EOF)
+      break;
   }
 }

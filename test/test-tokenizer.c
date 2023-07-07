@@ -11,8 +11,8 @@ void tsnc_test_tokenizer_single_character_tokens() {
   tsnc_source_memory_create(&source, "#@(){}[],:;\\", -1);
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 12,
-      "single character token stream size is 12");
+  ok(tsnc_token_stream_size(&source.tokens) == 13,
+      "single character token stream size is 13");
   ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 0,
       "single token character token report vector size is 0");
 
@@ -76,6 +76,11 @@ void tsnc_test_tokenizer_single_character_tokens() {
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: \\");
 
+  extoken.kind = TSNC_TOKEN_KIND_EOF;
+  extoken.startpos = 11; extoken.endpos = 11; extoken.str = "";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+
   tsnc_source_free(&source);
 }
 
@@ -90,8 +95,8 @@ void tsnc_test_tokenizer_operators() {
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 39,
-      "operator token stream size is 39");
+  ok(tsnc_token_stream_size(&source.tokens) == 40,
+      "operator token stream size is 40");
   ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 0,
       "operator report vector size is 0");
 
@@ -290,6 +295,11 @@ void tsnc_test_tokenizer_operators() {
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: ??");
 
+  extoken.kind = TSNC_TOKEN_KIND_EOF;
+  extoken.startpos = 110; extoken.endpos = 110; extoken.str = "";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+
   tsnc_source_free(&source);
 }
 
@@ -303,7 +313,7 @@ void tsnc_test_tokenizer_string() {
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 2, "string token stream size is 2");
+  ok(tsnc_token_stream_size(&source.tokens) == 3, "string token stream size is 3");
   ok(tsnc_vector_size(&source.reportv,
       sizeof(struct tsnc_report)) == 2, "string literal report vector size is 2");
 
@@ -317,8 +327,10 @@ void tsnc_test_tokenizer_string() {
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: 'str2'");
 
-  ok(tsnc_vector_size(&source.reportv,
-        sizeof(struct tsnc_report)) == 2, "report vector size is 2");
+  extoken.kind = TSNC_TOKEN_KIND_EOF;
+  extoken.startpos = 24; extoken.endpos = 24; extoken.str = "";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
 
   exreport.kind = TSNC_REPORT_KIND_ERROR;
   exreport.startpos = 14; exreport.endpos = 18;
@@ -347,7 +359,7 @@ void tsnc_test_tokenizer_number_hex() {
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 2, "hexadecimal token stream size is 2");
+  ok(tsnc_token_stream_size(&source.tokens) == 3, "hexadecimal token stream size is 3");
   ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 2,
       "hexadecimal report vector size is 2");
 
@@ -365,6 +377,11 @@ void tsnc_test_tokenizer_number_hex() {
   extoken.str = "0XFF";
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: 0XFF");
+
+  extoken.kind = TSNC_TOKEN_KIND_EOF;
+  extoken.startpos = 30; extoken.endpos = 30; extoken.str = "";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
 
   exreport.kind = TSNC_REPORT_KIND_ERROR;
   exreport.startpos = 24; exreport.endpos = 27;
@@ -393,8 +410,8 @@ void tsnc_test_tokenizer_number_bin() {
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 2,
-      "binary number literal token stream size is 2");
+  ok(tsnc_token_stream_size(&source.tokens) == 3,
+      "binary number literal token stream size is 3");
   ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 2,
       "binary number literal report vector size is 2");
 
@@ -409,6 +426,11 @@ void tsnc_test_tokenizer_number_bin() {
   extoken.str = "0B1001";
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: 0B1001");
+
+  extoken.kind = TSNC_TOKEN_KIND_EOF;
+  extoken.startpos = 27; extoken.endpos = 27; extoken.str = "";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
 
   exreport.kind = TSNC_REPORT_KIND_ERROR;
   exreport.startpos = 17; exreport.endpos = 24;
@@ -437,8 +459,8 @@ void tsnc_test_tokenizer_number_octal() {
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 2,
-      "octal number literal token stream size is 2");
+  ok(tsnc_token_stream_size(&source.tokens) == 3,
+      "octal number literal token stream size is 3");
   ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 2,
       "octal number literal report vector size is 2");
 
@@ -453,6 +475,11 @@ void tsnc_test_tokenizer_number_octal() {
   extoken.str = "0O1234";
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: 0O1234");
+
+  extoken.kind = TSNC_TOKEN_KIND_EOF;
+  extoken.startpos = 24; extoken.endpos = 24; extoken.str = "";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
 
   exreport.kind = TSNC_REPORT_KIND_ERROR;
   exreport.startpos = 17; exreport.endpos = 21;
@@ -487,8 +514,8 @@ void tsnc_test_tokenizer_keywords() {
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 45,
-      "keyword token stream size is 45");
+  ok(tsnc_token_stream_size(&source.tokens) == 46,
+      "keyword token stream size is 46");
   ok(tsnc_vector_size(&source.reportv,
       sizeof(struct tsnc_report)) == 0, "keyword report vector size is 0");
 
@@ -762,6 +789,11 @@ void tsnc_test_tokenizer_keywords() {
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: yield");
 
+  extoken.kind = TSNC_TOKEN_KIND_EOF;
+  extoken.startpos = 286; extoken.endpos = 286; extoken.str = "";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+
   tsnc_source_free(&source);
 }
 
@@ -773,8 +805,8 @@ void tsnc_test_tokenizer_identifiers() {
   tsnc_source_memory_create(&source, "nAme _ide$ntifier0", -1);
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 2,
-      "identifier token stream size is 2");
+  ok(tsnc_token_stream_size(&source.tokens) == 3,
+      "identifier token stream size is 3");
   ok(tsnc_vector_size(&source.reportv,
       sizeof(struct tsnc_report)) == 0, "report vector size is 0");
 
@@ -789,6 +821,11 @@ void tsnc_test_tokenizer_identifiers() {
   extoken.str = "_ide$ntifier0";
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: _ide$ntifier0");
+
+  extoken.kind = TSNC_TOKEN_KIND_EOF;
+  extoken.startpos = 17; extoken.endpos = 17; extoken.str = "";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
 
   tsnc_source_free(&source);
 }
