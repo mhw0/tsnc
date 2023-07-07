@@ -18,13 +18,13 @@ struct tsnc_vector {
   size_t icurs;
 };
 
-int tsnc_vector_create(struct tsnc_vector *dest);
+int tsnc_vector_init(struct tsnc_vector *dest);
 int tsnc_vector_iter(void *dest, struct tsnc_vector *vector,
     size_t size);
 int tsnc_vector_at(void *dest, struct tsnc_vector *vector,
 		size_t size, size_t index);
 int tsnc_vector_push(struct tsnc_vector *vector,
     size_t size, void *data);
-int tsnc_vector_size(struct tsnc_vector *vector, size_t size);
+size_t tsnc_vector_size(struct tsnc_vector *vector, size_t size);
 
 #endif

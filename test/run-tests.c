@@ -1,6 +1,6 @@
 #include <tap.h>
 #include <tsnc/token.h>
-#include "test-token.h"
+#include "test-tokenizer.h"
 
 int main(void) {
   diag("tokenizer single character operators");

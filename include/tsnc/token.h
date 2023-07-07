@@ -2,7 +2,6 @@
 #define TSNC_TOKEN_H
 #include <stdlib.h>
 #include <tsnc/vector.h>
-#include <tsnc/source.h>
 
 #define TSNC_TOKEN_KEYWORDS_COUNT 45
 #define TSNC_TOKEN_KEYWORDS { \
@@ -101,13 +100,9 @@ struct tsnc_token {
   size_t endpos;
 };
 
-int tsnc_token_create(struct tsnc_token *dest,
-    enum tsnc_token_kind kind, char *token, size_t len,
-    size_t startpos, size_t endpos);
-void tsnc_tokenize_source(struct tsnc_source *source);
-int tsnc_token_equal(struct tsnc_token *left,
-    struct tsnc_token *right);
-int tsnc_tokenv_cleanup(struct tsnc_vector *tokenv);
-int tsnc_token_cleanup(struct tsnc_token *token);
+int tsnc_token_create(struct tsnc_token *dest, enum tsnc_token_kind kind,
+    char *token, size_t len, size_t startpos, size_t endpos);
+int tsnc_token_equal(struct tsnc_token *left, struct tsnc_token *right);
+void tsnc_token_free(struct tsnc_token *token);
 
 #endif

@@ -1,6 +1,6 @@
 #include <tsnc/vector.h>
 
-int tsnc_vector_create(struct tsnc_vector *dest) {
+int tsnc_vector_init(struct tsnc_vector *dest) {
   void *buf;
   if (dest == NULL)
     return 0;
@@ -52,7 +52,7 @@ int tsnc_vector_at(void *dest, struct tsnc_vector *vector,
 	return 1;
 }
 
-int tsnc_vector_size(struct tsnc_vector *vector, size_t size) {
+size_t tsnc_vector_size(struct tsnc_vector *vector, size_t size) {
   if (vector == NULL)
     return 0;
 

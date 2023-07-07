@@ -2,7 +2,7 @@ PROJECT(tsnc-run-tests)
 
 SET(TEST_SOURCE_FILES
     run-tests.c
-    test-token.c)
+    test-tokenizer.c)
 
 ADD_TEST(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 ADD_EXECUTABLE(${PROJECT_NAME} ${TEST_SOURCE_FILES})

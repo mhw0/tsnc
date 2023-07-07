@@ -4,6 +4,7 @@
 #include <tsnc/vector.h>
 #include <tsnc/program.h>
 #include <tsnc/report.h>
+#include <tsnc/token-stream.h>
 
 #define tsnc_source_report_error(source, startpos, endpos, message, ...) \
   tsnc_source_report(source, TSNC_REPORT_KIND_ERROR, startpos, endpos, message, __VA_ARGS__);
@@ -20,8 +21,8 @@ struct tsnc_source {
   char *path;
   /* file pointer */
   FILE *fp;
-  /* holds tokens for this source */
-  struct tsnc_vector tokenv;
+  /* token stream */
+  struct tsnc_token_stream tokens;
   /* holds reports for this source */
   struct tsnc_vector reportv;
 };
@@ -30,8 +31,7 @@ int tsnc_source_memory_create(struct tsnc_source *dest,
     const char *source, int len);
 int tsnc_source_file_create(struct tsnc_source *dest,
     const char *path);
-int tsnc_source_compile(struct tsnc_source *source);
-int tsnc_source_cleanup(struct tsnc_source *source);
+void tsnc_source_free(struct tsnc_source *source);
 void tsnc_source_report(struct tsnc_source *source,
     enum tsnc_report_kind kind, size_t startpos, size_t endpos,
     const char *message, ...);

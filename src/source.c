@@ -1,9 +1,11 @@
 #include <assert.h>
 #include <stdarg.h>
-#include <tsnc/token.h>
+#include <stdio.h>
+#include <tsnc/source.h>
+#include <tsnc/token-stream.h>
 
-int tsnc_source_memory_create(struct tsnc_source *dest,
-    const char *source, int len) {
+int tsnc_source_memory_create(struct tsnc_source *dest, const char *source,
+    int len) {
 	FILE *fp;
 
   if (dest == NULL || source == NULL)
@@ -16,8 +18,8 @@ int tsnc_source_memory_create(struct tsnc_source *dest,
   // returns NULL and it should be checked
 	fp = fmemopen((void*)source, len, "r");
   
-  tsnc_vector_create(&dest->tokenv);
-  tsnc_vector_create(&dest->reportv);
+  tsnc_token_stream_init(&dest->tokens);
+  tsnc_vector_init(&dest->reportv);
   
   dest->fp = fp;
   dest->path = NULL;
@@ -49,38 +51,21 @@ int tsnc_source_file_create(struct tsnc_source *dest,
   return 1;
 }
 
-int tsnc_source_compile(struct tsnc_source *source) {
+void tsnc_source_free(struct tsnc_source *source) {
   if (source == NULL)
-    return 0;
-  
-  tsnc_tokenize_source(source);
-  
-  return 1;
-}
-
-int tsnc_source_cleanup(struct tsnc_source *source) {
-  struct tsnc_token token;
-  
-  if (source == NULL)
-    return 0;
+    return;
 
   fclose(source->fp);
   
   // if the source kind is not file, we do not have path
   if (source->path != NULL)
     free(source->path);
-  
-  while (tsnc_vector_iter(&token, &source->tokenv,
-        sizeof(struct tsnc_token))) {
-    tsnc_token_cleanup(&token);
-  }
-  
-  return 0;
+
+  tsnc_token_stream_free(&source->tokens);
 }
 
-void tsnc_source_report(struct tsnc_source *source,
-    enum tsnc_report_kind kind, size_t startpos, size_t endpos,
-    const char *message, ...) {
+void tsnc_source_report(struct tsnc_source *source, enum tsnc_report_kind kind,
+    size_t startpos, size_t endpos, const char *message, ...) {
   struct tsnc_report report;
   char *fmtmsg;
   va_list args;
@@ -94,6 +79,5 @@ void tsnc_source_report(struct tsnc_source *source,
   report.endpos = endpos;
   report.message = fmtmsg;
 
-  tsnc_vector_push(&source->reportv,
-      sizeof(struct tsnc_report), &report);
+  tsnc_vector_push(&source->reportv, sizeof(struct tsnc_report), &report);
 }
