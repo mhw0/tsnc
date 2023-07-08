@@ -291,7 +291,8 @@ int tsnc_tokenize_keyword(struct tsnc_token *dest,
 
   startpos = ftell(srcfp);
 
-  while ((currch = fgetc(srcfp)) != ' ' && currch != EOF)
+  while ((currch = fgetc(srcfp)) != ' ' && currch != EOF
+      && (currch >= 'a' && currch <= 'z'))
     charscnt++;
 
   kwbuf = (char*)malloc(charscnt);
