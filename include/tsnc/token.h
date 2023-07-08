@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <tsnc/vector.h>
 
-#define TSNC_TOKEN_KEYWORDS_COUNT 45
+#define TSNC_TOKEN_KEYWORDS_COUNT 46
 #define TSNC_TOKEN_KEYWORDS { \
    "break",   "case",       "catch",    "class",   \
    "const",   "continue",   "debugger", "default", \
@@ -14,6 +14,7 @@
    "return",  "super",      "switch",   "this",    \
    "throw",   "true",       "try",      "typeof",  \
    "var",     "void",       "while",    "with",    \
+   "from" ,                                        \
                                                    \
    "implements", "interface", "let",    "package", \
    "private",    "protected", "public", "static",  \
@@ -85,7 +86,8 @@ enum tsnc_token_kind {
   TSNC_TOKEN_KIND_STRING,
   TSNC_TOKEN_KIND_BIGNUMBER,
   TSNC_TOKEN_KIND_KEYWORD,
-  TSNC_TOKEN_KIND_IDENTIFIER
+  TSNC_TOKEN_KIND_IDENTIFIER,
+  TSNC_TOKEN_KIND_EOF
 };
 
 /* holds token fields */

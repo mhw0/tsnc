@@ -510,12 +510,13 @@ void tsnc_test_tokenizer_keywords() {
       "if import in instanceof new null return "
       "super switch this throw true try typeof var "
       "void while with implements interface let "
-      "package private protected public static yield", -1);
+      "package private protected public static yield "
+      "from", -1);
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 46,
-      "keyword token stream size is 46");
+  ok(tsnc_token_stream_size(&source.tokens) == 47,
+      "keyword token stream size is 47");
   ok(tsnc_vector_size(&source.reportv,
       sizeof(struct tsnc_report)) == 0, "keyword report vector size is 0");
 
@@ -789,8 +790,14 @@ void tsnc_test_tokenizer_keywords() {
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: yield");
 
+  extoken.kind = TSNC_TOKEN_KIND_KEYWORD;
+  extoken.startpos = 288; extoken.endpos = 291;
+  extoken.str = "from";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: from");
+
   extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 286; extoken.endpos = 286; extoken.str = "";
+  extoken.startpos = 291; extoken.endpos = 291; extoken.str = "";
   tsnc_token_stream_next(&token, &source.tokens);
   ok(tsnc_token_equal(&token, &extoken), "token: EOF");
 
