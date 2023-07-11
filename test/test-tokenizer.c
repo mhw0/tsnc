@@ -836,3 +836,40 @@ void tsnc_test_tokenizer_identifiers() {
 
   tsnc_source_free(&source);
 }
+
+void tsnc_test_tokenizer_end_of_line() {
+  struct tsnc_source source;
+  struct tsnc_token token, extoken;
+
+  tsnc_source_memory_create(&source, "a\nc", -1);
+  tsnc_tokenize_source(&source);
+
+  ok(tsnc_token_stream_size(&source.tokens) == 4,
+      "end of line token stream size is 4");
+
+  extoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
+  extoken.startpos = 0; extoken.endpos = 0;
+  extoken.str = "a";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: a");
+
+  extoken.kind = TSNC_TOKEN_KIND_EOL;
+  extoken.startpos = 1; extoken.endpos = 1;
+  extoken.str = "\n";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: \\n");
+
+  extoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
+  extoken.startpos = 2; extoken.endpos = 2;
+  extoken.str = "c";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: c");
+
+  extoken.kind = TSNC_TOKEN_KIND_EOF;
+  extoken.startpos = 2; extoken.endpos = 2;
+  extoken.str = "";
+  tsnc_token_stream_next(&token, &source.tokens);
+  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+
+  tsnc_source_free(&source);
+}

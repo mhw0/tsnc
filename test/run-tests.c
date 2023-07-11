@@ -27,6 +27,9 @@ int main(void) {
   diag("tokenizer identifiers");
   tsnc_test_tokenizer_identifiers();
 
+  diag("tokenizer end of line");
+  tsnc_test_tokenizer_end_of_line();
+
   done_testing();
   return 0;
 }

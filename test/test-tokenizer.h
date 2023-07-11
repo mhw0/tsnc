@@ -7,3 +7,4 @@ void tsnc_test_tokenizer_number_bin();
 void tsnc_test_tokenizer_number_octal();
 void tsnc_test_tokenizer_keywords();
 void tsnc_test_tokenizer_identifiers();
+void tsnc_test_tokenizer_end_of_line();

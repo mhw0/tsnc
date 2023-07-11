@@ -371,8 +371,11 @@ static int tsnc_token_source_next(struct tsnc_token *dest,
             startpos, startpos);
         return 1;
       case ' ':
-      case '\n':
         continue;
+      case '\n':
+        tsnc_token_create(dest, TSNC_TOKEN_KIND_EOL, "\n", 1,
+            startpos, startpos);
+        return 1;
       /* single character tokens */
       case ',': case '#':
       case '@': case '\\':
