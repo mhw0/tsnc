@@ -333,18 +333,18 @@ void tsnc_test_tokenizer_string() {
   ok(tsnc_token_equal(&token, &extoken), "token: EOF");
 
   exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 14; exreport.endpos = 18;
-  exreport.message = "Invalid or unexpected token";
+  exreport.startpos = 18; exreport.endpos = 18;
+  exreport.message = "Unterminated string literal.";
   tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 0);
   ok(tsnc_report_equal(&report, &exreport),
-      "Invalid or unexpected token error for: \"str3");
+      "Unterminated string literal error for: \"str3");
 
   exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 20; exreport.endpos = 24;
-  exreport.message = "Invalid or unexpected token";
+  exreport.startpos = 24; exreport.endpos = 24;
+  exreport.message = "Unterminated string literal.";
   tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 1);
   ok(tsnc_report_equal(&report, &exreport),
-      "Invalid or unexpected token error for: 'str4");
+      "Unterminated string literal for: 'str4");
 
   tsnc_source_free(&source);
 }

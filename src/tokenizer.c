@@ -21,8 +21,9 @@ static int tsnc_tokenize_string(struct tsnc_token *dest,
     charscnt++;
 
   if (currch != startch) {
-    tsnc_source_report_error(source, startpos, startpos + charscnt,
-        "Invalid or unexpected token", NULL);
+    endpos = startpos + charscnt;
+    tsnc_source_report_error(source, endpos, endpos,
+        "Unterminated string literal.", NULL);
     return 0;
   }
 
