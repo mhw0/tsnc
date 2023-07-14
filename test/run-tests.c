@@ -1,6 +1,7 @@
 #include <tap.h>
 #include <tsnc/token.h>
 #include "test-tokenizer.h"
+#include "test-parser.h"
 
 int main(void) {
   diag("tokenizer single character operators");
@@ -29,6 +30,9 @@ int main(void) {
 
   diag("tokenizer end of line");
   tsnc_test_tokenizer_end_of_line();
+
+  diag("parser import declaration");
+  tsnc_test_parser_import_decl();
 
   done_testing();
   return 0;

@@ -5,6 +5,7 @@
 #include <tsnc/program.h>
 #include <tsnc/report.h>
 #include <tsnc/token-stream.h>
+#include <tsnc/ast.h>
 
 #define tsnc_source_report_error(source, startpos, endpos, message, ...) \
   tsnc_source_report(source, TSNC_REPORT_KIND_ERROR, startpos, endpos, message, __VA_ARGS__);
@@ -25,6 +26,10 @@ struct tsnc_source {
   struct tsnc_token_stream tokens;
   /* holds reports for this source */
   struct tsnc_vector reportv;
+  /* holds current AST node */
+  struct tsnc_ast_node *currnode;
+  /* holds root AST node */
+  struct tsnc_ast_node *node;
 };
 
 int tsnc_source_memory_create(struct tsnc_source *dest,

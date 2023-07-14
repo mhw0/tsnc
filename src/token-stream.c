@@ -26,8 +26,13 @@ int tsnc_token_stream_peek(struct tsnc_token *dest,
 
 int tsnc_token_stream_next(struct tsnc_token *dest,
     struct tsnc_token_stream *tokens) {
-  if (dest == NULL || tokens == NULL)
+  if (tokens == NULL)
     return 0;
+
+  if (dest == NULL) {
+    tokens->curs++;
+    return 1;
+  }
 
   return tsnc_vector_at(dest, &tokens->tokenv,
       sizeof(struct tsnc_token), tokens->curs++);

@@ -23,6 +23,8 @@ int tsnc_source_memory_create(struct tsnc_source *dest, const char *source,
   
   dest->fp = fp;
   dest->path = NULL;
+  dest->node = NULL;
+  dest->currnode = NULL;
   return 1;
 }
 
