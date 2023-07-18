@@ -273,17 +273,6 @@ static int tsnc_tokenize_number(struct tsnc_token *dest,
   return 1;
 }
 
-int tsnc_token_is_keyword(const char *str) {
-  const char *keywords[] = TSNC_TOKEN_KEYWORDS;
-  int i;
-
-  for (i = 0; i < TSNC_TOKEN_KEYWORDS_COUNT; i++)
-    if (strcmp(str, keywords[i]) == 0)
-      return 1;
-
-  return 0;
-}
-
 int tsnc_tokenize_keyword(struct tsnc_token *dest,
     struct tsnc_source *source) {
   size_t startpos=0, charscnt=0;
@@ -303,12 +292,108 @@ int tsnc_tokenize_keyword(struct tsnc_token *dest,
   fread(kwbuf, sizeof(char), charscnt, srcfp);
   kwbuf[charscnt] = '\0';
 
-  if (tsnc_token_is_keyword(kwbuf) == 0) {
+  if (strcmp(kwbuf, "as") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_AS;
+  else if (strcmp(kwbuf, "break") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_BREAK;
+  else if (strcmp(kwbuf, "case") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_CASE;
+  else if (strcmp(kwbuf, "catch") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_CATCH;
+  else if (strcmp(kwbuf, "class") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_CLASS;
+  else if (strcmp(kwbuf, "const") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_CONST;
+  else if (strcmp(kwbuf, "continue") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_CONTINUE;
+  else if (strcmp(kwbuf, "debugger") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_DEBUGGER;
+  else if (strcmp(kwbuf, "default") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_DEFAULT;
+  else if (strcmp(kwbuf, "delete") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_DELETE;
+  else if (strcmp(kwbuf, "do") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_DO;
+  else if (strcmp(kwbuf, "else") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_ELSE;
+  else if (strcmp(kwbuf, "enum") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_ENUM;
+  else if (strcmp(kwbuf, "export") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_EXPORT;
+  else if (strcmp(kwbuf, "extends") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_EXTENDS;
+  else if (strcmp(kwbuf, "extends") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_EXTENDS;
+  else if (strcmp(kwbuf, "false") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_FALSE;
+  else if (strcmp(kwbuf, "finally") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_FINALLY;
+  else if (strcmp(kwbuf, "for") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_FOR;
+  else if (strcmp(kwbuf, "from") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_FROM;
+  else if (strcmp(kwbuf, "function") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_FUNCTION;
+  else if (strcmp(kwbuf, "if") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_IF;
+  else if (strcmp(kwbuf, "implements") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_IMPLEMENTS;
+  else if (strcmp(kwbuf, "import") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_IMPORT;
+  else if (strcmp(kwbuf, "in") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_IN;
+  else if (strcmp(kwbuf, "instanceof") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_INSTANCEOF;
+  else if (strcmp(kwbuf, "interface") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_INTERFACE;
+  else if (strcmp(kwbuf, "let") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_LET;
+  else if (strcmp(kwbuf, "new") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_NEW;
+  else if (strcmp(kwbuf, "null") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_NULL;
+  else if (strcmp(kwbuf, "package") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_PACKAGE;
+  else if (strcmp(kwbuf, "private") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_PRIVATE;
+  else if (strcmp(kwbuf, "protected") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_PROTECTED;
+  else if (strcmp(kwbuf, "public") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_PUBLIC;
+  else if (strcmp(kwbuf, "return") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_RETURN;
+  else if (strcmp(kwbuf, "static") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_STATIC;
+  else if (strcmp(kwbuf, "super") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_SUPER;
+  else if (strcmp(kwbuf, "switch") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_SWITCH;
+  else if (strcmp(kwbuf, "this") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_THIS;
+  else if (strcmp(kwbuf, "throw") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_THROW;
+  else if (strcmp(kwbuf, "true") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_TRUE;
+  else if (strcmp(kwbuf, "try") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_TRY;
+  else if (strcmp(kwbuf, "typeof") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_TYPEOF;
+  else if (strcmp(kwbuf, "var") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_VAR;
+  else if (strcmp(kwbuf, "void") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_VOID;
+  else if (strcmp(kwbuf, "while") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_WHILE;
+  else if (strcmp(kwbuf, "with") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_WITH;
+  else if (strcmp(kwbuf, "yield") == 0)
+    dest->kind = TSNC_TOKEN_KIND_KEYWORD_YIELD;
+  else {
     fseek(srcfp, startpos, SEEK_SET);
+    free(kwbuf);
     return 0;
   }
 
-  dest->kind = TSNC_TOKEN_KIND_KEYWORD;
   dest->startpos = startpos;
   dest->endpos = startpos + charscnt - 1;
   dest->str = kwbuf;

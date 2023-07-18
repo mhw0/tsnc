@@ -3,24 +3,6 @@
 #include <stdlib.h>
 #include <tsnc/vector.h>
 
-#define TSNC_TOKEN_KEYWORDS_COUNT 46
-#define TSNC_TOKEN_KEYWORDS { \
-   "break",   "case",       "catch",    "class",   \
-   "const",   "continue",   "debugger", "default", \
-   "delete",  "do",         "else",     "enum",    \
-   "export",  "extends",    "false",    "finally", \
-   "for",     "function",   "if",       "import",  \
-   "in",      "instanceof", "new",      "null",    \
-   "return",  "super",      "switch",   "this",    \
-   "throw",   "true",       "try",      "typeof",  \
-   "var",     "void",       "while",    "with",    \
-   "from" ,                                        \
-                                                   \
-   "implements", "interface", "let",    "package", \
-   "private",    "protected", "public", "static",  \
-   "yield"                                         \
-}
-
 /* token kind */
 enum tsnc_token_kind {
   TSNC_TOKEN_KIND_QUESTION_MARK                                 = '?',
@@ -85,10 +67,58 @@ enum tsnc_token_kind {
   TSNC_TOKEN_KIND_NUMBER,
   TSNC_TOKEN_KIND_STRING,
   TSNC_TOKEN_KIND_BIGNUMBER,
-  TSNC_TOKEN_KIND_KEYWORD,
   TSNC_TOKEN_KIND_IDENTIFIER,
   TSNC_TOKEN_KIND_EOL,
-  TSNC_TOKEN_KIND_EOF
+  TSNC_TOKEN_KIND_EOF,
+
+  TSNC_TOKEN_KIND_KEYWORD,
+  TSNC_TOKEN_KIND_KEYWORD_AS,
+  TSNC_TOKEN_KIND_KEYWORD_BREAK,
+  TSNC_TOKEN_KIND_KEYWORD_CASE,
+  TSNC_TOKEN_KIND_KEYWORD_CATCH,
+  TSNC_TOKEN_KIND_KEYWORD_CLASS,
+  TSNC_TOKEN_KIND_KEYWORD_CONST,
+  TSNC_TOKEN_KIND_KEYWORD_CONTINUE,
+  TSNC_TOKEN_KIND_KEYWORD_DEBUGGER,
+  TSNC_TOKEN_KIND_KEYWORD_DEFAULT,
+  TSNC_TOKEN_KIND_KEYWORD_DELETE,
+  TSNC_TOKEN_KIND_KEYWORD_DO,
+  TSNC_TOKEN_KIND_KEYWORD_ELSE,
+  TSNC_TOKEN_KIND_KEYWORD_ENUM,
+  TSNC_TOKEN_KIND_KEYWORD_EXPORT,
+  TSNC_TOKEN_KIND_KEYWORD_EXTENDS,
+  TSNC_TOKEN_KIND_KEYWORD_FALSE,
+  TSNC_TOKEN_KIND_KEYWORD_FINALLY,
+  TSNC_TOKEN_KIND_KEYWORD_FOR,
+  TSNC_TOKEN_KIND_KEYWORD_FROM,
+  TSNC_TOKEN_KIND_KEYWORD_FUNCTION,
+  TSNC_TOKEN_KIND_KEYWORD_IF,
+  TSNC_TOKEN_KIND_KEYWORD_IMPLEMENTS,
+  TSNC_TOKEN_KIND_KEYWORD_IMPORT,
+  TSNC_TOKEN_KIND_KEYWORD_IN,
+  TSNC_TOKEN_KIND_KEYWORD_INSTANCEOF,
+  TSNC_TOKEN_KIND_KEYWORD_INTERFACE,
+  TSNC_TOKEN_KIND_KEYWORD_LET,
+  TSNC_TOKEN_KIND_KEYWORD_NEW,
+  TSNC_TOKEN_KIND_KEYWORD_NULL,
+  TSNC_TOKEN_KIND_KEYWORD_PACKAGE,
+  TSNC_TOKEN_KIND_KEYWORD_PRIVATE,
+  TSNC_TOKEN_KIND_KEYWORD_PROTECTED,
+  TSNC_TOKEN_KIND_KEYWORD_PUBLIC,
+  TSNC_TOKEN_KIND_KEYWORD_RETURN,
+  TSNC_TOKEN_KIND_KEYWORD_STATIC,
+  TSNC_TOKEN_KIND_KEYWORD_SUPER,
+  TSNC_TOKEN_KIND_KEYWORD_SWITCH,
+  TSNC_TOKEN_KIND_KEYWORD_THIS,
+  TSNC_TOKEN_KIND_KEYWORD_THROW,
+  TSNC_TOKEN_KIND_KEYWORD_TRUE,
+  TSNC_TOKEN_KIND_KEYWORD_TRY,
+  TSNC_TOKEN_KIND_KEYWORD_TYPEOF,
+  TSNC_TOKEN_KIND_KEYWORD_VAR,
+  TSNC_TOKEN_KIND_KEYWORD_VOID,
+  TSNC_TOKEN_KIND_KEYWORD_WHILE,
+  TSNC_TOKEN_KIND_KEYWORD_WITH,
+  TSNC_TOKEN_KIND_KEYWORD_YIELD,
 };
 
 /* holds token fields */
