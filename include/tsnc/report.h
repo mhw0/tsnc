@@ -19,6 +19,10 @@ struct tsnc_report {
   size_t startpos;
   /* report end position */
   size_t endpos;
+  /* holds previous report */
+  struct tsnc_report *prev;
+  /* holds next report */
+  struct tsnc_report *next;
 };
 
 int tsnc_report_equal(struct tsnc_report *left, struct tsnc_report *right);

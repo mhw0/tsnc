@@ -131,11 +131,16 @@ struct tsnc_token {
   size_t startpos;
   /* end position of token */
   size_t endpos;
+  /* points to the previous token */
+  struct tsnc_token *prev;
+  /* points to the next token */
+  struct tsnc_token *next;
 };
 
-int tsnc_token_create(struct tsnc_token *dest, enum tsnc_token_kind kind,
-    char *token, size_t len, size_t startpos, size_t endpos);
+struct tsnc_token *tsnc_token_create(enum tsnc_token_kind kind,
+    const char *tokenstr, size_t startpos, size_t endpos);
 int tsnc_token_equal(struct tsnc_token *left, struct tsnc_token *right);
 void tsnc_token_free(struct tsnc_token *token);
+const char *tsnc_token_kind_tostr(enum tsnc_token_kind kind);
 
 #endif

@@ -6,87 +6,80 @@
 
 void tsnc_test_tokenizer_single_character_tokens() {
   struct tsnc_source source;
-  struct tsnc_token token, extoken;
+  struct tsnc_token *token, exptoken;
 
-  tsnc_source_memory_create(&source, "#@(){}[],:;\\", -1);
+  tsnc_source_memory_create(&source, "#@(){}[],:;", -1);
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 13,
-      "single character token stream size is 13");
-  ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 0,
-      "single token character token report vector size is 0");
+  token = source.token;
+  exptoken.kind = TSNC_TOKEN_KIND_HASHTAG;
+  exptoken.startpos = 0; exptoken.endpos = 1; exptoken.str = "#";
+  ok(tsnc_token_equal(token, &exptoken), "token: #");
 
-  extoken.kind = TSNC_TOKEN_KIND_HASHTAG;
-  extoken.startpos = 0; extoken.endpos = 0; extoken.str = "#";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: #");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_ASPERAND;
+  exptoken.startpos = 1; exptoken.endpos = 2; exptoken.str = "@";
+  ok(tsnc_token_equal(token, &exptoken), "token: @");
 
-  extoken.kind = TSNC_TOKEN_KIND_ASPERAND;
-  extoken.startpos = 1; extoken.endpos = 1; extoken.str = "@";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: @");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_ROUND_BRACKET_OPEN;
+  exptoken.startpos = 2; exptoken.endpos = 3; exptoken.str = "(";
+  ok(tsnc_token_equal(token, &exptoken), "token: (");
 
-  extoken.kind = TSNC_TOKEN_KIND_ROUND_BRACKET_OPEN;
-  extoken.startpos = 2; extoken.endpos = 2; extoken.str = "(";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: (");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_ROUND_BRACKET_CLOSE;
+  exptoken.startpos = 3; exptoken.endpos = 4; exptoken.str = ")";
+  ok(tsnc_token_equal(token, &exptoken), "token: )");
 
-  extoken.kind = TSNC_TOKEN_KIND_ROUND_BRACKET_CLOSE;
-  extoken.startpos = 3; extoken.endpos = 3; extoken.str = ")";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: )");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_CURLY_BRACKET_OPEN;
+  exptoken.startpos = 4; exptoken.endpos = 5; exptoken.str = "{";
+  ok(tsnc_token_equal(token, &exptoken), "token: {");
 
-  extoken.kind = TSNC_TOKEN_KIND_CURLY_BRACKET_OPEN;
-  extoken.startpos = 4; extoken.endpos = 4; extoken.str = "{";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: {");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_CURLY_BRACKET_CLOSE;
+  exptoken.startpos = 5; exptoken.endpos = 6; exptoken.str = "}";
+  ok(tsnc_token_equal(token, &exptoken), "token: }");
 
-  extoken.kind = TSNC_TOKEN_KIND_CURLY_BRACKET_CLOSE;
-  extoken.startpos = 5; extoken.endpos = 5; extoken.str = "}";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: }");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_SQUARE_BRACKET_OPEN;
+  exptoken.startpos = 6; exptoken.endpos = 7; exptoken.str = "[";
+  ok(tsnc_token_equal(token, &exptoken), "token: [");
 
-  extoken.kind = TSNC_TOKEN_KIND_SQUARE_BRACKET_OPEN;
-  extoken.startpos = 6; extoken.endpos = 6; extoken.str = "[";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: [");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_SQUARE_BRACKET_CLOSE;
+  exptoken.startpos = 7; exptoken.endpos = 8; exptoken.str = "]";
+  ok(tsnc_token_equal(token, &exptoken), "token: ]");
 
-  extoken.kind = TSNC_TOKEN_KIND_SQUARE_BRACKET_CLOSE;
-  extoken.startpos = 7; extoken.endpos = 7; extoken.str = "]";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ]");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_COMMA;
+  exptoken.startpos = 8; exptoken.endpos = 9; exptoken.str = ",";
+  ok(tsnc_token_equal(token, &exptoken), "token: ,");
 
-  extoken.kind = TSNC_TOKEN_KIND_COMMA;
-  extoken.startpos = 8; extoken.endpos = 8; extoken.str = ",";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ,");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_COLON;
+  exptoken.startpos = 9; exptoken.endpos = 10; exptoken.str = ":";
+  ok(tsnc_token_equal(token, &exptoken), "token: :");
 
-  extoken.kind = TSNC_TOKEN_KIND_COLON;
-  extoken.startpos = 9; extoken.endpos = 9; extoken.str = ":";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: :");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_SEMICOLON;
+  exptoken.startpos = 10; exptoken.endpos = 11; exptoken.str = ";";
+  ok(tsnc_token_equal(token, &exptoken), "token: ;");
 
-  extoken.kind = TSNC_TOKEN_KIND_SEMICOLON;
-  extoken.startpos = 10; extoken.endpos = 10; extoken.str = ";";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ;");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOF;
+  exptoken.startpos = 11; exptoken.endpos = 11; exptoken.str = "<eof>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eof>");
 
-  extoken.kind = TSNC_TOKEN_KIND_BACKSLASH;
-  extoken.startpos = 11; extoken.endpos = 11; extoken.str = "\\";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: \\");
-
-  extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 11; extoken.endpos = 11; extoken.str = "";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+  token = token->next;
+  ok(token == NULL, "no tokens left");
 
   tsnc_source_free(&source);
 }
 
 void tsnc_test_tokenizer_operators() {
   struct tsnc_source source;
-  struct tsnc_token token, extoken;
+  struct tsnc_token *token, exptoken;
 
   tsnc_source_memory_create(&source,
       "+ ++ += - -- -= / /= * ** *= **= = == === "
@@ -95,413 +88,386 @@ void tsnc_test_tokenizer_operators() {
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 40,
-      "operator token stream size is 40");
-  ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 0,
-      "operator report vector size is 0");
+  token = source.token;
+  exptoken.kind = TSNC_TOKEN_KIND_PLUS;
+  exptoken.startpos = 0; exptoken.endpos = 1; exptoken.str = "+";
+  ok(tsnc_token_equal(token, &exptoken), "token: +");
 
-  extoken.kind = TSNC_TOKEN_KIND_PLUS;
-  extoken.startpos = 0; extoken.endpos = 0; extoken.str = "+";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: +");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_PLUS_PLUS;
+  exptoken.startpos = 2; exptoken.endpos = 4; exptoken.str = "++";
+  ok(tsnc_token_equal(token, &exptoken), "token: ++");
 
-  extoken.kind = TSNC_TOKEN_KIND_PLUS_PLUS;
-  extoken.startpos = 2; extoken.endpos = 3; extoken.str = "++";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ++");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_PLUS_EQUAL;
+  exptoken.startpos = 5; exptoken.endpos = 7; exptoken.str = "+=";
+  ok(tsnc_token_equal(token, &exptoken), "token: +=");
 
-  extoken.kind = TSNC_TOKEN_KIND_PLUS_EQUAL;
-  extoken.startpos = 5; extoken.endpos = 6; extoken.str = "+=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: +=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_MINUS;
+  exptoken.startpos = 8; exptoken.endpos = 9; exptoken.str = "-";
+  ok(tsnc_token_equal(token, &exptoken), "token: -");
 
-  extoken.kind = TSNC_TOKEN_KIND_MINUS;
-  extoken.startpos = 8; extoken.endpos = 8; extoken.str = "-";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: -");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_MINUS_MINUS;
+  exptoken.startpos = 10; exptoken.endpos = 12; exptoken.str = "--";
+  ok(tsnc_token_equal(token, &exptoken), "token: --");
 
-  extoken.kind = TSNC_TOKEN_KIND_MINUS_MINUS;
-  extoken.startpos = 10; extoken.endpos = 11; extoken.str = "--";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: --");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_MINUS_EQUAL;
+  exptoken.startpos = 13; exptoken.endpos = 15; exptoken.str = "-=";
+  ok(tsnc_token_equal(token, &exptoken), "token: -=");
 
-  extoken.kind = TSNC_TOKEN_KIND_MINUS_EQUAL;
-  extoken.startpos = 13; extoken.endpos = 14; extoken.str = "-=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: -=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_SLASH;
+  exptoken.startpos = 16; exptoken.endpos = 17; exptoken.str = "/";
+  ok(tsnc_token_equal(token, &exptoken), "token: /");
 
-  extoken.kind = TSNC_TOKEN_KIND_SLASH;
-  extoken.startpos = 16; extoken.endpos = 16; extoken.str = "/";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: /");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_SLASH_EQUAL;
+  exptoken.startpos = 18; exptoken.endpos = 20; exptoken.str = "/=";
+  ok(tsnc_token_equal(token, &exptoken), "token: /=");
 
-  extoken.kind = TSNC_TOKEN_KIND_SLASH_EQUAL;
-  extoken.startpos = 18; extoken.endpos = 19; extoken.str = "/=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: /=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_ASTERISK;
+  exptoken.startpos = 21; exptoken.endpos = 22; exptoken.str = "*";
+  ok(tsnc_token_equal(token, &exptoken), "token: *");
 
-  extoken.kind = TSNC_TOKEN_KIND_ASTERISK;
-  extoken.startpos = 21; extoken.endpos = 21; extoken.str = "*";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: *");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_ASTERISK_ASTERISK;
+  exptoken.startpos = 23; exptoken.endpos = 25; exptoken.str = "**";
+  ok(tsnc_token_equal(token, &exptoken), "token: **");
 
-  extoken.kind = TSNC_TOKEN_KIND_ASTERISK_ASTERISK;
-  extoken.startpos = 23; extoken.endpos = 24; extoken.str = "**";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: **");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_ASTERISK_EQUAL;
+  exptoken.startpos = 26; exptoken.endpos = 28; exptoken.str = "*=";
+  ok(tsnc_token_equal(token, &exptoken), "token: *=");
 
-  extoken.kind = TSNC_TOKEN_KIND_ASTERISK_EQUAL;
-  extoken.startpos = 26; extoken.endpos = 27; extoken.str = "*=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: *=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_ASTERISK_ASTERISK_EQUAL;
+  exptoken.startpos = 29; exptoken.endpos = 32; exptoken.str = "**=";
+  ok(tsnc_token_equal(token, &exptoken), "token: **=");
 
-  extoken.kind = TSNC_TOKEN_KIND_ASTERISK_ASTERISK_EQUAL;
-  extoken.startpos = 29; extoken.endpos = 31; extoken.str = "**=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: **=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EQUAL;
+  exptoken.startpos = 33; exptoken.endpos = 34; exptoken.str = "=";
+  ok(tsnc_token_equal(token, &exptoken), "token: =");
 
-  extoken.kind = TSNC_TOKEN_KIND_EQUAL;
-  extoken.startpos = 33; extoken.endpos = 33; extoken.str = "=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: =");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EQUAL_EQUAL;
+  exptoken.startpos = 35; exptoken.endpos = 37; exptoken.str = "==";
+  ok(tsnc_token_equal(token, &exptoken), "token: ==");
 
-  extoken.kind = TSNC_TOKEN_KIND_EQUAL_EQUAL;
-  extoken.startpos = 35; extoken.endpos = 36; extoken.str = "==";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ==");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EQUAL_EQUAL_EQUAL;
+  exptoken.startpos = 38; exptoken.endpos = 41; exptoken.str = "===";
+  ok(tsnc_token_equal(token, &exptoken), "token: ===");
 
-  extoken.kind = TSNC_TOKEN_KIND_EQUAL_EQUAL_EQUAL;
-  extoken.startpos = 38; extoken.endpos = 40; extoken.str = "===";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ===");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EXCLAMATION_MARK;
+  exptoken.startpos = 42; exptoken.endpos = 43; exptoken.str = "!";
+  ok(tsnc_token_equal(token, &exptoken), "token: !");
 
-  extoken.kind = TSNC_TOKEN_KIND_EXCLAMATION_MARK;
-  extoken.startpos = 42; extoken.endpos = 42; extoken.str = "!";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: !");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EXCLAMATION_MARK_EQUAL;
+  exptoken.startpos = 44; exptoken.endpos = 46; exptoken.str = "!=";
+  ok(tsnc_token_equal(token, &exptoken), "token: !=");
 
-  extoken.kind = TSNC_TOKEN_KIND_EXCLAMATION_MARK_EQUAL;
-  extoken.startpos = 44; extoken.endpos = 45; extoken.str = "!=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: !=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EXCLAMATION_MARK_EQUAL_EQUAL;
+  exptoken.startpos = 47; exptoken.endpos = 50; exptoken.str = "!==";
+  ok(tsnc_token_equal(token, &exptoken), "token: !==");
 
-  extoken.kind = TSNC_TOKEN_KIND_EXCLAMATION_MARK_EQUAL_EQUAL;
-  extoken.startpos = 47; extoken.endpos = 49; extoken.str = "!==";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: !==");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_LESS_THAN;
+  exptoken.startpos = 51; exptoken.endpos = 52; exptoken.str = "<";
+  ok(tsnc_token_equal(token, &exptoken), "token: <");
 
-  extoken.kind = TSNC_TOKEN_KIND_LESS_THAN;
-  extoken.startpos = 51; extoken.endpos = 51; extoken.str = "<";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: <");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_LESS_THAN_LESS_THAN;
+  exptoken.startpos = 53; exptoken.endpos = 55; exptoken.str = "<<";
+  ok(tsnc_token_equal(token, &exptoken), "token: <<");
 
-  extoken.kind = TSNC_TOKEN_KIND_LESS_THAN_LESS_THAN;
-  extoken.startpos = 53; extoken.endpos = 54; extoken.str = "<<";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: <<");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_LESS_THAN_LESS_THAN_EQUAL;
+  exptoken.startpos = 56; exptoken.endpos = 59; exptoken.str = "<<=";
+  ok(tsnc_token_equal(token, &exptoken), "token: <<=");
 
-  extoken.kind = TSNC_TOKEN_KIND_LESS_THAN_LESS_THAN_EQUAL;
-  extoken.startpos = 56; extoken.endpos = 58; extoken.str = "<<=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: <<=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_LESS_THAN_LESS_THAN_EQUAL;
+  exptoken.kind = TSNC_TOKEN_KIND_GREATER_THAN;
+  exptoken.startpos = 60; exptoken.endpos = 61; exptoken.str = ">";
+  ok(tsnc_token_equal(token, &exptoken), "token: >");
 
-  extoken.kind = TSNC_TOKEN_KIND_GREATER_THAN;
-  extoken.startpos = 60; extoken.endpos = 60; extoken.str = ">";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: >");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_GREATER_THAN;
+  exptoken.startpos = 62; exptoken.endpos = 64; exptoken.str = ">>";
+  ok(tsnc_token_equal(token, &exptoken), "token: >>");
 
-  extoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_GREATER_THAN;
-  extoken.startpos = 62; extoken.endpos = 63; extoken.str = ">>";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: >>");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_EQUAL;
+  exptoken.startpos = 65; exptoken.endpos = 67; exptoken.str = ">=";
+  ok(tsnc_token_equal(token, &exptoken), "token: >=");
 
-  extoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_EQUAL;
-  extoken.startpos = 65; extoken.endpos = 66; extoken.str = ">=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: >=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_GREATER_THAN_GREATER_THAN;
+  exptoken.startpos = 68; exptoken.endpos = 71; exptoken.str = ">>>";
+  ok(tsnc_token_equal(token, &exptoken), "token: >>>");
 
-  extoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_GREATER_THAN_GREATER_THAN;
-  extoken.startpos = 68; extoken.endpos = 70; extoken.str = ">>>";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: >>>");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_GREATER_THAN_EQUAL;
+  exptoken.startpos = 72; exptoken.endpos = 75; exptoken.str = ">>=";
+  ok(tsnc_token_equal(token, &exptoken), "token: >>=");
 
-  extoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_GREATER_THAN_EQUAL;
-  extoken.startpos = 72; extoken.endpos = 74; extoken.str = ">>=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: >>=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL;
+  exptoken.startpos = 76; exptoken.endpos = 80; exptoken.str = ">>>=";
+  ok(tsnc_token_equal(token, &exptoken), "token: >>>=");
 
-  extoken.kind = TSNC_TOKEN_KIND_GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL;
-  extoken.startpos = 76; extoken.endpos = 79; extoken.str = ">>>=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: >>>=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_CARET;
+  exptoken.startpos = 82; exptoken.endpos = 83; exptoken.str = "^";
+  ok(tsnc_token_equal(token, &exptoken), "token: ^");
 
-  extoken.kind = TSNC_TOKEN_KIND_CARET;
-  extoken.startpos = 81; extoken.endpos = 81; extoken.str = "^";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ^");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_CARET_EQUAL;
+  exptoken.startpos = 84; exptoken.endpos = 86; exptoken.str = "^=";
+  ok(tsnc_token_equal(token, &exptoken), "token: ^=");
 
-  extoken.kind = TSNC_TOKEN_KIND_CARET_EQUAL;
-  extoken.startpos = 83; extoken.endpos = 84; extoken.str = "^=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ^=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_AMPERSAND;
+  exptoken.startpos = 87; exptoken.endpos = 88; exptoken.str = "&";
+  ok(tsnc_token_equal(token, &exptoken), "token: &");
 
-  extoken.kind = TSNC_TOKEN_KIND_AMPERSAND;
-  extoken.startpos = 86; extoken.endpos = 86; extoken.str = "&";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: &");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_AMPERSAND_AMPERSAND;
+  exptoken.startpos = 89; exptoken.endpos = 91; exptoken.str = "&&";
+  ok(tsnc_token_equal(token, &exptoken), "token: &&");
 
-  extoken.kind = TSNC_TOKEN_KIND_AMPERSAND_AMPERSAND;
-  extoken.startpos = 88; extoken.endpos = 89; extoken.str = "&&";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: &&");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_AMPERSAND_EQUAL;
+  exptoken.startpos = 92; exptoken.endpos = 94; exptoken.str = "&=";
+  ok(tsnc_token_equal(token, &exptoken), "token: &=");
 
-  extoken.kind = TSNC_TOKEN_KIND_AMPERSAND_EQUAL;
-  extoken.startpos = 91; extoken.endpos = 92; extoken.str = "&=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: &=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_VERTICAL_BAR;
+  exptoken.startpos = 95; exptoken.endpos = 96; exptoken.str = "|";
+  ok(tsnc_token_equal(token, &exptoken), "token: |");
 
-  extoken.kind = TSNC_TOKEN_KIND_VERTICAL_BAR;
-  extoken.startpos = 94; extoken.endpos = 94; extoken.str = "|";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: |");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_VERTICAL_BAR_VERTICAL_BAR;
+  exptoken.startpos = 97; exptoken.endpos = 99; exptoken.str = "||";
+  ok(tsnc_token_equal(token, &exptoken), "token: ||");
 
-  extoken.kind = TSNC_TOKEN_KIND_VERTICAL_BAR_VERTICAL_BAR;
-  extoken.startpos = 96; extoken.endpos = 97; extoken.str = "||";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ||");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_VERTICAL_BAR_EQUAL;
+  exptoken.startpos = 100; exptoken.endpos = 102; exptoken.str = "|=";
+  ok(tsnc_token_equal(token, &exptoken), "token: |=");
 
-  extoken.kind = TSNC_TOKEN_KIND_VERTICAL_BAR_EQUAL;
-  extoken.startpos = 99; extoken.endpos = 100; extoken.str = "|=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: |=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_PERCENTAGE;
+  exptoken.startpos = 103; exptoken.endpos = 104; exptoken.str = "%";
+  ok(tsnc_token_equal(token, &exptoken), "token: %%");
 
-  extoken.kind = TSNC_TOKEN_KIND_PERCENTAGE;
-  extoken.startpos = 102; extoken.endpos = 102; extoken.str = "%";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: %%");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_PERCENTAGE_EQUAL;
+  exptoken.startpos = 105; exptoken.endpos = 107; exptoken.str = "%=";
+  ok(tsnc_token_equal(token, &exptoken), "token: %%=");
 
-  extoken.kind = TSNC_TOKEN_KIND_PERCENTAGE_EQUAL;
-  extoken.startpos = 104; extoken.endpos = 105; extoken.str = "%=";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: %%=");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_QUESTION_MARK;
+  exptoken.startpos = 108; exptoken.endpos = 109; exptoken.str = "?";
+  ok(tsnc_token_equal(token, &exptoken), "token: ?");
 
-  extoken.kind = TSNC_TOKEN_KIND_QUESTION_MARK;
-  extoken.startpos = 107; extoken.endpos = 107; extoken.str = "?";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ?");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_QUESTION_MARK_QUESTION_MARK;
+  exptoken.startpos = 110; exptoken.endpos = 112; exptoken.str = "??";
+  ok(tsnc_token_equal(token, &exptoken), "token: ??");
 
-  extoken.kind = TSNC_TOKEN_KIND_QUESTION_MARK_QUESTION_MARK;
-  extoken.startpos = 109; extoken.endpos = 110; extoken.str = "??";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: ??");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOF;
+  exptoken.startpos = 112; exptoken.endpos = 112; exptoken.str = "<eof>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eof>");
 
-  extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 110; extoken.endpos = 110; extoken.str = "";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+  token = token->next;
+  ok(token == NULL, "no tokens left");
 
   tsnc_source_free(&source);
 }
 
 void tsnc_test_tokenizer_string() {
   struct tsnc_source source;
-  struct tsnc_report report, exreport;
-  struct tsnc_token token, extoken;
+  struct tsnc_token *token, exptoken;
+  struct tsnc_report *report, expreport;
 
   tsnc_source_memory_create(&source,
-      "\"str1\" \'str2\' \"str3\n'str4", -1);
+      "'text' \"текст\" \"文本\" 'test", -1);
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 3, "string token stream size is 3");
-  ok(tsnc_vector_size(&source.reportv,
-      sizeof(struct tsnc_report)) == 2, "string literal report vector size is 2");
+  token = source.token;
+  exptoken.kind = TSNC_TOKEN_KIND_STRING;
+  exptoken.startpos = 0; exptoken.endpos = 6; exptoken.str = "text";
+  ok(tsnc_token_equal(token, &exptoken), "token: \"text\"");
 
-  extoken.kind = TSNC_TOKEN_KIND_STRING;
-  extoken.startpos = 0; extoken.endpos = 5; extoken.str = "str1";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: \"str1\"");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_STRING;
+  exptoken.startpos = 7; exptoken.endpos = 14; exptoken.str = "текст";
+  ok(tsnc_token_equal(token, &exptoken), "token: \"текст\"");
 
-  extoken.kind = TSNC_TOKEN_KIND_STRING;
-  extoken.startpos = 7; extoken.endpos = 12; extoken.str = "str2";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: 'str2'");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_STRING;
+  exptoken.startpos = 15; exptoken.endpos = 19; exptoken.str = "文本";
+  ok(tsnc_token_equal(token, &exptoken), "token: \"文本\"");
 
-  extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 24; extoken.endpos = 24; extoken.str = "";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOF;
+  exptoken.startpos = 25; exptoken.endpos = 25; exptoken.str = "<eof>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eof>");
 
-  exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 18; exreport.endpos = 18;
-  exreport.message = "Unterminated string literal.";
-  tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 0);
-  ok(tsnc_report_equal(&report, &exreport),
-      "Unterminated string literal error for: \"str3");
+  ok(token->next == NULL, "no tokens left");
 
-  exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 24; exreport.endpos = 24;
-  exreport.message = "Unterminated string literal.";
-  tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 1);
-  ok(tsnc_report_equal(&report, &exreport),
-      "Unterminated string literal for: 'str4");
+  report = source.report;
+  expreport.kind = TSNC_REPORT_KIND_ERROR;
+  expreport.startpos = 20; expreport.endpos = 25;
+  expreport.message = "Unterminated string literal";
+  ok(tsnc_report_equal(report, &expreport),
+      "Invalid hexadecimal literal error for: 'test");
+
+  ok(report->next == NULL, "no reports left");
 
   tsnc_source_free(&source);
 }
 
 void tsnc_test_tokenizer_number_hex() {
   struct tsnc_source source;
-  struct tsnc_token token, extoken;
-  struct tsnc_report report, exreport;
+  struct tsnc_token *token, exptoken;
+  struct tsnc_report *report, expreport;
 
   tsnc_source_memory_create(&source,
-      "0xabcdef0123456789 0XFF 0xkk 0x", -1);
+      "0xabCdeF0123456789 0XFF 0x", -1);
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 3, "hexadecimal token stream size is 3");
-  ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 2,
-      "hexadecimal report vector size is 2");
+  token = source.token;
+  exptoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  exptoken.startpos = 0; exptoken.endpos = 18;
+  exptoken.str = "0xabCdeF0123456789";
+  ok(tsnc_token_equal(token, &exptoken), "token: 0xabcdef0123456789");
 
-  tsnc_vector_at(&token, &source.tokens.tokenv,
-      sizeof(struct tsnc_token), 0);
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  exptoken.startpos = 19; exptoken.endpos = 23;
+  exptoken.str = "0XFF";
+  ok(tsnc_token_equal(token, &exptoken), "token: 0XFF");
 
-  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
-  extoken.startpos = 0; extoken.endpos = 17;
-  extoken.str = "0xabcdef0123456789";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: 0xabcdef0123456789");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOF;
+  exptoken.startpos = 26; exptoken.endpos = 26;
+  exptoken.str = "<eof>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eof>");
 
-  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
-  extoken.startpos = 19; extoken.endpos = 22;
-  extoken.str = "0XFF";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: 0XFF");
+  ok(token->next == NULL, "no tokens left");
 
-  extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 30; extoken.endpos = 30; extoken.str = "";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
-
-  exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 24; exreport.endpos = 27;
-  exreport.message = "Invalid hexadecimal literal";
-  tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 0);
-  ok(tsnc_report_equal(&report, &exreport),
-      "Invalid hexadecimal literal error for: 0xkk");
-
-  exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 29; exreport.endpos = 30;
-  exreport.message = "Invalid hexadecimal literal";
-  tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 1);
-  ok(tsnc_report_equal(&report, &exreport),
+  report = source.report;
+  expreport.kind = TSNC_REPORT_KIND_ERROR;
+  expreport.startpos = 24; expreport.endpos = 26;
+  expreport.message = "Invalid hexadecimal literal";
+  ok(tsnc_report_equal(report, &expreport),
       "Invalid hexadecimal literal error for: 0x");
+
+  ok(report->next == NULL, "no reports left");
 
   tsnc_source_free(&source);
 }
 
 void tsnc_test_tokenizer_number_bin() {
   struct tsnc_source source;
-  struct tsnc_token token, extoken;
-  struct tsnc_report report, exreport;
+  struct tsnc_token *token, exptoken;
+  struct tsnc_report *report, expreport;
 
   tsnc_source_memory_create(&source,
-      "0b1100101 0B1001 0b123abc 0b", -1);
-
+      "0b1100101 0B1001 0b", -1);
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 3,
-      "binary number literal token stream size is 3");
-  ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 2,
-      "binary number literal report vector size is 2");
+  token = source.token;
+  exptoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  exptoken.startpos = 0; exptoken.endpos = 9;
+  exptoken.str = "0b1100101";
+  ok(tsnc_token_equal(token, &exptoken), "token: 0b1100101");
 
-  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
-  extoken.startpos = 0; extoken.endpos = 8;
-  extoken.str = "0b1100101";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: 0b1100101");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  exptoken.startpos = 10; exptoken.endpos = 16;
+  exptoken.str = "0B1001";
+  ok(tsnc_token_equal(token, &exptoken), "token: 0B1001");
 
-  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
-  extoken.startpos = 10; extoken.endpos = 15;
-  extoken.str = "0B1001";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: 0B1001");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOF;
+  exptoken.startpos = 19; exptoken.endpos = 19;
+  exptoken.str = "<eof>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eof>");
+  
+  ok(token->next == NULL, "no tokens left");
 
-  extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 27; extoken.endpos = 27; extoken.str = "";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
-
-  exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 17; exreport.endpos = 24;
-  exreport.message = "Invalid binary number literal";
-  tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 0);
-  ok(tsnc_report_equal(&report, &exreport),
-      "Invalid binary number literal error for: 0b123abc");
-
-  exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 26; exreport.endpos = 27;
-  exreport.message = "Invalid binary number literal";
-  tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 1);
-  ok(tsnc_report_equal(&report, &exreport),
+  report = source.report;
+  expreport.kind = TSNC_REPORT_KIND_ERROR;
+  expreport.startpos = 17; expreport.endpos = 19;
+  expreport.message = "Invalid binary number literal";
+  ok(tsnc_report_equal(report, &expreport),
       "Invalid binary number literal error for: 0b");
+
+  ok(report->next == NULL, "no reports left");
 
   tsnc_source_free(&source);
 }
 
 void tsnc_test_tokenizer_number_octal() {
   struct tsnc_source source;
-  struct tsnc_token token, extoken;
-  struct tsnc_report report, exreport;
+  struct tsnc_token *token, exptoken;
+  struct tsnc_report *report, expreport;
 
   tsnc_source_memory_create(&source,
-      "0o1234567 0O1234 0o899 0o", -1);
+      "0o1234567 0O1234 0o", -1);
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 3,
-      "octal number literal token stream size is 3");
-  ok(tsnc_vector_size(&source.reportv, sizeof(struct tsnc_report)) == 2,
-      "octal number literal report vector size is 2");
+  token = source.token;
+  exptoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  exptoken.startpos = 0; exptoken.endpos = 9;
+  exptoken.str = "0o1234567";
+  ok(tsnc_token_equal(token, &exptoken), "token: 0o1234567");
 
-  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
-  extoken.startpos = 0; extoken.endpos = 8;
-  extoken.str = "0o1234567";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: 0o1234567");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_NUMBER;
+  exptoken.startpos = 10; exptoken.endpos = 16;
+  exptoken.str = "0O1234";
+  ok(tsnc_token_equal(token, &exptoken), "token: 0O1234");
 
-  extoken.kind = TSNC_TOKEN_KIND_NUMBER;
-  extoken.startpos = 10; extoken.endpos = 15;
-  extoken.str = "0O1234";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: 0O1234");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOF;
+  exptoken.startpos = 19; exptoken.endpos = 19;
+  exptoken.str = "<eof>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eof>");
 
-  extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 24; extoken.endpos = 24; extoken.str = "";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+  ok(token->next == NULL, "no tokens left");
 
-  exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 17; exreport.endpos = 21;
-  exreport.message = "Invalid octal number literal";
-  tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 0);
-  ok(tsnc_report_equal(&report, &exreport),
-      "Invalid octal number literal error for: 0o899");
-
-  exreport.kind = TSNC_REPORT_KIND_ERROR;
-  exreport.startpos = 23; exreport.endpos = 24;
-  exreport.message = "Invalid octal number literal";
-  tsnc_vector_at(&report, &source.reportv, sizeof(struct tsnc_report), 1);
-  ok(tsnc_report_equal(&report, &exreport),
+  report = source.report;
+  expreport.kind = TSNC_REPORT_KIND_ERROR;
+  expreport.startpos = 17; expreport.endpos = 19;
+  expreport.message = "Invalid octal number literal";
+  ok(tsnc_report_equal(report, &expreport),
       "Invalid octal number literal error for: 0o");
+
+  ok(token->next == NULL, "no reports left");
 
   tsnc_source_free(&source);
 }
 
 void tsnc_test_tokenizer_keywords() {
   struct tsnc_source source;
-  struct tsnc_token token, extoken;
-  struct tsnc_report report, exreport;
+  struct tsnc_token *token, exptoken;
+  struct tsnc_report report, expreport;
 
   tsnc_source_memory_create(&source,
       "break case catch class const continue "
@@ -515,361 +481,357 @@ void tsnc_test_tokenizer_keywords() {
 
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 47,
-      "keyword token stream size is 47");
-  ok(tsnc_vector_size(&source.reportv,
-      sizeof(struct tsnc_report)) == 0, "keyword report vector size is 0");
+  token = source.token;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_BREAK;
+  exptoken.startpos = 0; exptoken.endpos = 5;
+  exptoken.str = "break";
+  ok(tsnc_token_equal(token, &exptoken), "token: break");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_BREAK;
-  extoken.startpos = 0; extoken.endpos = 4;
-  extoken.str = "break";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: break");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_CASE;
+  exptoken.startpos = 6; exptoken.endpos = 10;
+  exptoken.str = "case";
+  ok(tsnc_token_equal(token, &exptoken), "token: case");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_CASE;
-  extoken.startpos = 6; extoken.endpos = 9;
-  extoken.str = "case";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: case");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_CATCH;
+  exptoken.startpos = 11; exptoken.endpos = 16;
+  exptoken.str = "catch";
+  ok(tsnc_token_equal(token, &exptoken), "token: catch");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_CATCH;
-  extoken.startpos = 11; extoken.endpos = 15;
-  extoken.str = "catch";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: catch");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_CLASS;
+  exptoken.startpos = 17; exptoken.endpos = 22;
+  exptoken.str = "class";
+  ok(tsnc_token_equal(token, &exptoken), "token: class");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_CLASS;
-  extoken.startpos = 17; extoken.endpos = 21;
-  extoken.str = "class";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: class");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_CONST;
+  exptoken.startpos = 23; exptoken.endpos = 28;
+  exptoken.str = "const";
+  ok(tsnc_token_equal(token, &exptoken), "token: const");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_CONST;
-  extoken.startpos = 23; extoken.endpos = 27;
-  extoken.str = "const";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: const");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_CONTINUE;
+  exptoken.startpos = 29; exptoken.endpos = 37;
+  exptoken.str = "continue";
+  ok(tsnc_token_equal(token, &exptoken), "token: continue");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_CONTINUE;
-  extoken.startpos = 29; extoken.endpos = 36;
-  extoken.str = "continue";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: continue");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_DEBUGGER;
+  exptoken.startpos = 38; exptoken.endpos = 46;
+  exptoken.str = "debugger";
+  ok(tsnc_token_equal(token, &exptoken), "token: debugger");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_DEBUGGER;
-  extoken.startpos = 38; extoken.endpos = 45;
-  extoken.str = "debugger";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: debugger");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_DEFAULT;
+  exptoken.startpos = 47; exptoken.endpos = 54;
+  exptoken.str = "default";
+  ok(tsnc_token_equal(token, &exptoken), "token: default");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_DEFAULT;
-  extoken.startpos = 47; extoken.endpos = 53;
-  extoken.str = "default";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: default");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_DELETE;
+  exptoken.startpos = 55; exptoken.endpos = 61;
+  exptoken.str = "delete";
+  ok(tsnc_token_equal(token, &exptoken), "token: delete");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_DELETE;
-  extoken.startpos = 55; extoken.endpos = 60;
-  extoken.str = "delete";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: delete");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_DO;
+  exptoken.startpos = 62; exptoken.endpos = 64;
+  exptoken.str = "do";
+  ok(tsnc_token_equal(token, &exptoken), "token: do");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_DO;
-  extoken.startpos = 62; extoken.endpos = 63;
-  extoken.str = "do";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: do");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_ELSE;
+  exptoken.startpos = 65; exptoken.endpos = 69;
+  exptoken.str = "else";
+  ok(tsnc_token_equal(token, &exptoken), "token: else");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_ELSE;
-  extoken.startpos = 65; extoken.endpos = 68;
-  extoken.str = "else";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: else");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_ENUM;
+  exptoken.startpos = 70; exptoken.endpos = 74;
+  exptoken.str = "enum";
+  ok(tsnc_token_equal(token, &exptoken), "token: enum");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_ENUM;
-  extoken.startpos = 70; extoken.endpos = 73;
-  extoken.str = "enum";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: enum");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_EXPORT;
+  exptoken.startpos = 75; exptoken.endpos = 81;
+  exptoken.str = "export";
+  ok(tsnc_token_equal(token, &exptoken), "token: export");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_EXPORT;
-  extoken.startpos = 75; extoken.endpos = 80;
-  extoken.str = "export";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: export");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_EXTENDS;
+  exptoken.startpos = 82; exptoken.endpos = 89;
+  exptoken.str = "extends";
+  ok(tsnc_token_equal(token, &exptoken), "token: extends");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_EXTENDS;
-  extoken.startpos = 82; extoken.endpos = 88;
-  extoken.str = "extends";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: extends");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_FALSE;
+  exptoken.startpos = 90; exptoken.endpos = 95;
+  exptoken.str = "false";
+  ok(tsnc_token_equal(token, &exptoken), "token: false");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_FALSE;
-  extoken.startpos = 90; extoken.endpos = 94;
-  extoken.str = "false";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: false");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_FINALLY;
+  exptoken.startpos = 96; exptoken.endpos = 103;
+  exptoken.str = "finally";
+  ok(tsnc_token_equal(token, &exptoken), "token: finally");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_FINALLY;
-  extoken.startpos = 96; extoken.endpos = 102;
-  extoken.str = "finally";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: finally");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_FOR;
+  exptoken.startpos = 104; exptoken.endpos = 107;
+  exptoken.str = "for";
+  ok(tsnc_token_equal(token, &exptoken), "token: for");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_FOR;
-  extoken.startpos = 104; extoken.endpos = 106;
-  extoken.str = "for";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: for");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_FUNCTION;
+  exptoken.startpos = 108; exptoken.endpos = 116;
+  exptoken.str = "function";
+  ok(tsnc_token_equal(token, &exptoken), "token: function");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_FUNCTION;
-  extoken.startpos = 108; extoken.endpos = 115;
-  extoken.str = "function";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: function");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_IF;
+  exptoken.startpos = 117; exptoken.endpos = 119;
+  exptoken.str = "if";
+  ok(tsnc_token_equal(token, &exptoken), "token: if");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_IF;
-  extoken.startpos = 117; extoken.endpos = 118;
-  extoken.str = "if";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: if");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_IMPORT;
+  exptoken.startpos = 120; exptoken.endpos = 126;
+  exptoken.str = "import";
+  ok(tsnc_token_equal(token, &exptoken), "token: import");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_IMPORT;
-  extoken.startpos = 120; extoken.endpos = 125;
-  extoken.str = "import";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: import");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_IN;
+  exptoken.startpos = 127; exptoken.endpos = 129;
+  exptoken.str = "in";
+  ok(tsnc_token_equal(token, &exptoken), "token: in");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_IN;
-  extoken.startpos = 127; extoken.endpos = 128;
-  extoken.str = "in";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: in");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_INSTANCEOF;
+  exptoken.startpos = 130; exptoken.endpos = 140;
+  exptoken.str = "instanceof";
+  ok(tsnc_token_equal(token, &exptoken), "token: instanceof");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_INSTANCEOF;
-  extoken.startpos = 130; extoken.endpos = 139;
-  extoken.str = "instanceof";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: instanceof");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_NEW;
+  exptoken.startpos = 141; exptoken.endpos = 144;
+  exptoken.str = "new";
+  ok(tsnc_token_equal(token, &exptoken), "token: new");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_NEW;
-  extoken.startpos = 141; extoken.endpos = 143;
-  extoken.str = "new";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: new");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_NULL;
+  exptoken.startpos = 145; exptoken.endpos = 149;
+  exptoken.str = "null";
+  ok(tsnc_token_equal(token, &exptoken), "token: null");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_NULL;
-  extoken.startpos = 145; extoken.endpos = 148;
-  extoken.str = "null";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: null");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_RETURN;
+  exptoken.startpos = 150; exptoken.endpos = 156;
+  exptoken.str = "return";
+  ok(tsnc_token_equal(token, &exptoken), "token: return");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_RETURN;
-  extoken.startpos = 150; extoken.endpos = 155;
-  extoken.str = "return";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: return");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_SUPER;
+  exptoken.startpos = 157; exptoken.endpos = 162;
+  exptoken.str = "super";
+  ok(tsnc_token_equal(token, &exptoken), "token: super");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_SUPER;
-  extoken.startpos = 157; extoken.endpos = 161;
-  extoken.str = "super";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: super");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_SWITCH;
+  exptoken.startpos = 163; exptoken.endpos = 169;
+  exptoken.str = "switch";
+  ok(tsnc_token_equal(token, &exptoken), "token: switch");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_SWITCH;
-  extoken.startpos = 163; extoken.endpos = 168;
-  extoken.str = "switch";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: switch");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_THIS;
+  exptoken.startpos = 170; exptoken.endpos = 174;
+  exptoken.str = "this";
+  ok(tsnc_token_equal(token, &exptoken), "token: this");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_THIS;
-  extoken.startpos = 170; extoken.endpos = 173;
-  extoken.str = "this";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: this");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_THROW;
+  exptoken.startpos = 175; exptoken.endpos = 180;
+  exptoken.str = "throw";
+  ok(tsnc_token_equal(token, &exptoken), "token: throw");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_THROW;
-  extoken.startpos = 175; extoken.endpos = 179;
-  extoken.str = "throw";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: throw");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_TRUE;
+  exptoken.startpos = 181; exptoken.endpos = 185;
+  exptoken.str = "true";
+  ok(tsnc_token_equal(token, &exptoken), "token: true");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_TRUE;
-  extoken.startpos = 181; extoken.endpos = 184;
-  extoken.str = "true";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: true");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_TRY;
+  exptoken.startpos = 186; exptoken.endpos = 189;
+  exptoken.str = "try";
+  ok(tsnc_token_equal(token, &exptoken), "token: try");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_TRY;
-  extoken.startpos = 186; extoken.endpos = 188;
-  extoken.str = "try";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: try");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_TYPEOF;
+  exptoken.startpos = 190; exptoken.endpos = 196;
+  exptoken.str = "typeof";
+  ok(tsnc_token_equal(token, &exptoken), "token: typeof");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_TYPEOF;
-  extoken.startpos = 190; extoken.endpos = 195;
-  extoken.str = "typeof";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: typeof");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_VAR;
+  exptoken.startpos = 197; exptoken.endpos = 200;
+  exptoken.str = "var";
+  ok(tsnc_token_equal(token, &exptoken), "token: var");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_VAR;
-  extoken.startpos = 197; extoken.endpos = 199;
-  extoken.str = "var";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: var");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_VOID;
+  exptoken.startpos = 201; exptoken.endpos = 205;
+  exptoken.str = "void";
+  ok(tsnc_token_equal(token, &exptoken), "token: void");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_VOID;
-  extoken.startpos = 201; extoken.endpos = 204;
-  extoken.str = "void";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: void");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_WHILE;
+  exptoken.startpos = 206; exptoken.endpos = 211;
+  exptoken.str = "while";
+  ok(tsnc_token_equal(token, &exptoken), "token: while");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_WHILE;
-  extoken.startpos = 206; extoken.endpos = 210;
-  extoken.str = "while";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: while");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_WITH;
+  exptoken.startpos = 212; exptoken.endpos = 216;
+  exptoken.str = "with";
+  ok(tsnc_token_equal(token, &exptoken), "token: with");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_WITH;
-  extoken.startpos = 212; extoken.endpos = 215;
-  extoken.str = "with";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: with");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_IMPLEMENTS;
+  exptoken.startpos = 217; exptoken.endpos = 227;
+  exptoken.str = "implements";
+  ok(tsnc_token_equal(token, &exptoken), "token: implements");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_IMPLEMENTS;
-  extoken.startpos = 217; extoken.endpos = 226;
-  extoken.str = "implements";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: implements");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_INTERFACE;
+  exptoken.startpos = 228; exptoken.endpos = 237;
+  exptoken.str = "interface";
+  ok(tsnc_token_equal(token, &exptoken), "token: interface");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_INTERFACE;
-  extoken.startpos = 228; extoken.endpos = 236;
-  extoken.str = "interface";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: interface");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_LET;
+  exptoken.startpos = 238; exptoken.endpos = 241;
+  exptoken.str = "let";
+  ok(tsnc_token_equal(token, &exptoken), "token: let");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_LET;
-  extoken.startpos = 238; extoken.endpos = 240;
-  extoken.str = "let";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: let");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_PACKAGE;
+  exptoken.startpos = 242; exptoken.endpos = 249;
+  exptoken.str = "package";
+  ok(tsnc_token_equal(token, &exptoken), "token: package");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_PACKAGE;
-  extoken.startpos = 242; extoken.endpos = 248;
-  extoken.str = "package";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: package");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_PRIVATE;
+  exptoken.startpos = 250; exptoken.endpos = 257;
+  exptoken.str = "private";
+  ok(tsnc_token_equal(token, &exptoken), "token: private");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_PRIVATE;
-  extoken.startpos = 250; extoken.endpos = 256;
-  extoken.str = "private";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: private");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_PROTECTED;
+  exptoken.startpos = 258; exptoken.endpos = 267;
+  exptoken.str = "protected";
+  ok(tsnc_token_equal(token, &exptoken), "token: protected");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_PROTECTED;
-  extoken.startpos = 258; extoken.endpos = 266;
-  extoken.str = "protected";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: protected");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_PUBLIC;
+  exptoken.startpos = 268; exptoken.endpos = 274;
+  exptoken.str = "public";
+  ok(tsnc_token_equal(token, &exptoken), "token: public");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_PUBLIC;
-  extoken.startpos = 268; extoken.endpos = 273;
-  extoken.str = "public";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: public");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_STATIC;
+  exptoken.startpos = 275; exptoken.endpos = 281;
+  exptoken.str = "static";
+  ok(tsnc_token_equal(token, &exptoken), "token: static");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_STATIC;
-  extoken.startpos = 275; extoken.endpos = 280;
-  extoken.str = "static";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: static");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_YIELD;
+  exptoken.startpos = 282; exptoken.endpos = 287;
+  exptoken.str = "yield";
+  ok(tsnc_token_equal(token, &exptoken), "token: yield");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_YIELD;
-  extoken.startpos = 282; extoken.endpos = 286;
-  extoken.str = "yield";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: yield");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_KEYWORD_FROM;
+  exptoken.startpos = 288; exptoken.endpos = 292;
+  exptoken.str = "from";
+  ok(tsnc_token_equal(token, &exptoken), "token: from");
 
-  extoken.kind = TSNC_TOKEN_KIND_KEYWORD_FROM;
-  extoken.startpos = 288; extoken.endpos = 291;
-  extoken.str = "from";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: from");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOF;
+  exptoken.startpos = 292; exptoken.endpos = 292; exptoken.str = "<eof>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eof>");
 
-  extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 291; extoken.endpos = 291; extoken.str = "";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+  ok(token->next == NULL, "no tokens left");
 
   tsnc_source_free(&source);
 }
 
 void tsnc_test_tokenizer_identifiers() {
   struct tsnc_source source;
-  struct tsnc_token token, extoken;
-  struct tsnc_report report, exreport;
+  struct tsnc_token *token, exptoken;
+  struct tsnc_report report, expreport;
 
-  tsnc_source_memory_create(&source, "nAme _ide$ntifier0", -1);
+  tsnc_source_memory_create(&source, "identifier $идентификатор _标识符", -1);
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 3,
-      "identifier token stream size is 3");
-  ok(tsnc_vector_size(&source.reportv,
-      sizeof(struct tsnc_report)) == 0, "report vector size is 0");
+  token = source.token;
+  exptoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
+  exptoken.startpos = 0; exptoken.endpos = 10;
+  exptoken.str = "identifier";
+  ok(tsnc_token_equal(token, &exptoken), "token: identifier");
 
-  extoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
-  extoken.startpos = 0; extoken.endpos = 3;
-  extoken.str = "nAme";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: nAme");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
+  exptoken.startpos = 11; exptoken.endpos = 25;
+  exptoken.str = "$идентификатор";
+  ok(tsnc_token_equal(token, &exptoken), "token: $идентификатор");
 
-  extoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
-  extoken.startpos = 5; extoken.endpos = 17;
-  extoken.str = "_ide$ntifier0";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: _ide$ntifier0");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
+  exptoken.startpos = 26; exptoken.endpos = 30;
+  exptoken.str = "_标识符";
+  ok(tsnc_token_equal(token, &exptoken), "token: _标识符");
 
-  extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 17; extoken.endpos = 17; extoken.str = "";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOF;
+  exptoken.startpos = 30; exptoken.endpos = 30;
+  exptoken.str = "<eof>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eof>");
+
+  ok(token->next == NULL, "no tokens left");
 
   tsnc_source_free(&source);
 }
 
 void tsnc_test_tokenizer_end_of_line() {
   struct tsnc_source source;
-  struct tsnc_token token, extoken;
+  struct tsnc_token *token, exptoken;
 
-  tsnc_source_memory_create(&source, "a\nc", -1);
+  tsnc_source_memory_create(&source, "ab\n\ncd", -1);
   tsnc_tokenize_source(&source);
 
-  ok(tsnc_token_stream_size(&source.tokens) == 4,
-      "end of line token stream size is 4");
+  token = source.token;
+  exptoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
+  exptoken.startpos = 0; exptoken.endpos = 2; exptoken.str = "ab";
+  ok(tsnc_token_equal(token, &exptoken), "token: ab");
 
-  extoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
-  extoken.startpos = 0; extoken.endpos = 0;
-  extoken.str = "a";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: a");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOL;
+  exptoken.startpos = 2; exptoken.endpos = 3; exptoken.str = "<eol>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eol>");
 
-  extoken.kind = TSNC_TOKEN_KIND_EOL;
-  extoken.startpos = 1; extoken.endpos = 1;
-  extoken.str = "\n";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: \\n");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
+  exptoken.startpos = 4; exptoken.endpos = 6; exptoken.str = "cd";
+  ok(tsnc_token_equal(token, &exptoken), "token: cd");
 
-  extoken.kind = TSNC_TOKEN_KIND_IDENTIFIER;
-  extoken.startpos = 2; extoken.endpos = 2;
-  extoken.str = "c";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: c");
+  token = token->next;
+  exptoken.kind = TSNC_TOKEN_KIND_EOF;
+  exptoken.startpos = 6; exptoken.endpos = 6; exptoken.str = "<eof>";
+  ok(tsnc_token_equal(token, &exptoken), "token: <eof>");
 
-  extoken.kind = TSNC_TOKEN_KIND_EOF;
-  extoken.startpos = 2; extoken.endpos = 2;
-  extoken.str = "";
-  tsnc_token_stream_next(&token, &source.tokens);
-  ok(tsnc_token_equal(&token, &extoken), "token: EOF");
+  ok(token->next == NULL, "no tokens left");
 
   tsnc_source_free(&source);
 }

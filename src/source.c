@@ -25,6 +25,11 @@ int tsnc_source_memory_create(struct tsnc_source *dest, const char *source,
   dest->path = NULL;
   dest->node = NULL;
   dest->currnode = NULL;
+  dest->token = NULL;
+  dest->leaftoken = NULL;
+  dest->report = NULL;
+  dest->leafreport = NULL;
+  dest->charpos = 0;
   return 1;
 }
 
@@ -68,7 +73,7 @@ void tsnc_source_free(struct tsnc_source *source) {
 
 void tsnc_source_report(struct tsnc_source *source, enum tsnc_report_kind kind,
     size_t startpos, size_t endpos, const char *message, ...) {
-  struct tsnc_report report;
+  struct tsnc_report *report;
   char *fmtmsg;
   va_list args;
 
@@ -76,10 +81,23 @@ void tsnc_source_report(struct tsnc_source *source, enum tsnc_report_kind kind,
   vasprintf(&fmtmsg, message, args);
   va_end(args);
 
-  report.kind = kind;
-  report.startpos = startpos;
-  report.endpos = endpos;
-  report.message = fmtmsg;
+  report = (struct tsnc_report*)malloc(sizeof(struct tsnc_report));
+  assert(report && "Unable to allocate memory for report");
 
-  tsnc_vector_push(&source->reportv, sizeof(struct tsnc_report), &report);
+  report->kind = kind;
+  report->startpos = startpos;
+  report->endpos = endpos;
+  report->message = fmtmsg;
+  report->prev = NULL;
+  report->next = NULL;
+
+  if (source->leafreport == NULL) {
+    source->report = report;
+    source->leafreport = report;
+    return;
+  }
+
+  report->prev = source->leafreport;
+  source->leafreport->next = report;
+  source->leafreport = report;
 }

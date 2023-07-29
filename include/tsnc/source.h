@@ -26,10 +26,20 @@ struct tsnc_source {
   struct tsnc_token_stream tokens;
   /* holds reports for this source */
   struct tsnc_vector reportv;
+  /* holds root report */
+  struct tsnc_report *report;
+  /* holds leaf report */
+  struct tsnc_report *leafreport;
   /* holds current AST node */
   struct tsnc_ast_node *currnode;
   /* holds root AST node */
   struct tsnc_ast_node *node;
+  /* holds root token */
+  struct tsnc_token *token;
+  /* holds leaf token */
+  struct tsnc_token *leaftoken;
+  /* utf-8 char position */
+  size_t charpos;
 };
 
 int tsnc_source_memory_create(struct tsnc_source *dest,
