@@ -1186,22 +1186,24 @@ static struct tsnc_token *tsnc_tokenize_next(struct tsnc_source *source,
 }
 
 void tsnc_tokenize_source(struct tsnc_source *source) {
-  struct tsnc_token *token;
+  struct tsnc_token *newtoken, *token=NULL;
 
   if (source == NULL || source->fp == NULL)
     return;
 
-  while ((token = tsnc_tokenize_next(source, source->leaftoken))) {
+  while ((newtoken = tsnc_tokenize_next(source, token))) {
     if (source->token == NULL) {
-      source->token = token;
-      source->leaftoken = token;
-    } else {
-      token->prev = source->leaftoken;
-      source->leaftoken->next = token;
-      source->leaftoken = token;
+      source->token = newtoken;
+      source->currtoken = newtoken;
+      token = newtoken;
+      continue;
     }
 
-    if (token->kind == TSNC_TOKEN_KIND_EOF)
+    newtoken->prev = token;
+    token->next = newtoken;
+    token = newtoken;
+
+    if (newtoken->kind == TSNC_TOKEN_KIND_EOF)
       break;
   }
 }

@@ -36,8 +36,8 @@ struct tsnc_source {
   struct tsnc_ast_node *node;
   /* holds root token */
   struct tsnc_token *token;
-  /* holds leaf token */
-  struct tsnc_token *leaftoken;
+  /* holds current token */
+  struct tsnc_token *currtoken;
   /* utf-8 char position */
   size_t charpos;
 };

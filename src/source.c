@@ -26,7 +26,7 @@ int tsnc_source_memory_create(struct tsnc_source *dest, const char *source,
   dest->node = NULL;
   dest->currnode = NULL;
   dest->token = NULL;
-  dest->leaftoken = NULL;
+  dest->currtoken = NULL;
   dest->report = NULL;
   dest->leafreport = NULL;
   dest->charpos = 0;

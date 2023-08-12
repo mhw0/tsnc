@@ -19,9 +19,9 @@ struct tsnc_report {
   size_t startpos;
   /* report end position */
   size_t endpos;
-  /* holds previous report */
+  /* points to the previous report */
   struct tsnc_report *prev;
-  /* holds next report */
+  /* points to the next report */
   struct tsnc_report *next;
 };
 
