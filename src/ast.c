@@ -3,10 +3,6 @@
 #include <tsnc/ast.h>
 #include <stdio.h>
 
-#define TSNC_AST_NODE_IMPORT_DECL(node) node->m.import_decl
-#define TSNC_AST_NODE_STRLIT(node) node->m.strlit
-#define TSNC_AST_NODE_IDENT(node) node->m.ident
-
 static struct tsnc_ast_node *tsnc_ast_node_create(enum tsnc_ast_node_kind kind,
     size_t startpos, size_t endpos) {
   struct tsnc_ast_node *node;
