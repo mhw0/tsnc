@@ -7,10 +7,10 @@
 #include <tsnc/compiler/unicode.h>
 
 enum tsnc_token_kind tsnc_token_create(struct tsnc_token *token, struct tsnc_source *source,
-		enum tsnc_token_kind kind, const char *str, size_t begpos, size_t endpos) {
+    enum tsnc_token_kind kind, const char *str, size_t begpos, size_t endpos) {
 
   if (source != NULL)
-		tsnc_source_consume(source);
+    tsnc_source_consume(source);
 
   if (token == NULL)
     return kind;
@@ -20,7 +20,7 @@ enum tsnc_token_kind tsnc_token_create(struct tsnc_token *token, struct tsnc_sou
   token->begpos = begpos;
   token->endpos = endpos;
 
-	return kind;
+  return kind;
 }
 
 enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest,
@@ -121,13 +121,13 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest,
 
       return tsnc_token_create(dest, NULL, TokenKindExclamationMark, "!", begpos, begpos+1);
     case UnicodeLessThanSign:
-			tsnc_source_consume(source);
+      tsnc_source_consume(source);
 
-			unicodep = tsnc_source_peek(source);
+      unicodep = tsnc_source_peek(source);
       if (unicodep == UnicodeLessThanSign) {
-				tsnc_source_consume(source);
+        tsnc_source_consume(source);
 
-				unicodep = tsnc_source_peek(source);
+        unicodep = tsnc_source_peek(source);
         if (unicodep == UnicodeEqualsSign)
           return tsnc_token_create(dest, source, TokenKindLessThanLessThanEqual, "<<=", begpos, begpos+3);
 
@@ -136,17 +136,17 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest,
 
       return tsnc_token_create(dest, NULL, TokenKindLessThan, "<", begpos, begpos+1);
     case UnicodeGreaterThanSign:
-			tsnc_source_consume(source);
+      tsnc_source_consume(source);
 
-			unicodep = tsnc_source_peek(source);
+      unicodep = tsnc_source_peek(source);
       if (unicodep == UnicodeGreaterThanSign) {
-				tsnc_source_consume(source);
+        tsnc_source_consume(source);
 
-				unicodep = tsnc_source_peek(source);
+        unicodep = tsnc_source_peek(source);
         if (unicodep == UnicodeGreaterThanSign) {
-					tsnc_source_consume(source);
+          tsnc_source_consume(source);
 
-					unicodep = tsnc_source_peek(source);
+          unicodep = tsnc_source_peek(source);
           if (unicodep == UnicodeEqualsSign)
             return tsnc_token_create(dest, source, TokenKindGreaterThanGreaterThanGreaterThanEqual, ">>>=", begpos, begpos+4);
 
@@ -160,17 +160,17 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest,
 
       return tsnc_token_create(dest, NULL, TokenKindGreaterThan, ">", begpos, begpos+1);
     case UnicodeCircumflexAccent:
-			tsnc_source_consume(source);
+      tsnc_source_consume(source);
 
-			unicodep = tsnc_source_peek(source);
+      unicodep = tsnc_source_peek(source);
       if (unicodep == UnicodeEqualsSign)
         return tsnc_token_create(dest, source, TokenKindCaretEqual, "^=", begpos, begpos + 2);
 
       return tsnc_token_create(dest, NULL, TokenKindCaret, "^", begpos, begpos + 1);
     case UnicodeAmpersand:
-			tsnc_source_consume(source);
+      tsnc_source_consume(source);
 
-			unicodep = tsnc_source_peek(source);
+      unicodep = tsnc_source_peek(source);
       if (unicodep == UnicodeAmpersand)
         return tsnc_token_create(dest, source, TokenKindAmpersandAmpersand, "&&", begpos, begpos + 2);
       else if (unicodep == UnicodeEqualsSign)
@@ -178,9 +178,9 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest,
 
       return tsnc_token_create(dest, NULL, TokenKindAmpersand, "&", begpos, begpos + 1);
     case UnicodeVerticalLine:
-			tsnc_source_consume(source);
+      tsnc_source_consume(source);
 
-			unicodep = tsnc_source_peek(source);
+      unicodep = tsnc_source_peek(source);
       if (unicodep == UnicodeVerticalLine)
         return tsnc_token_create(dest, source, TokenKindVerticalBarVerticalBar, "||", begpos, begpos + 2);
       else if (unicodep == UnicodeEqualsSign)
@@ -190,7 +190,7 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest,
     case UnicodePercentSign:
       tsnc_source_consume(source);
 
-			unicodep = tsnc_source_peek(source);
+      unicodep = tsnc_source_peek(source);
       if (unicodep == UnicodeEqualsSign)
         return tsnc_token_create(dest, source, TokenKindPercentageEqual, "%=", begpos, begpos + 2);
 
@@ -198,7 +198,7 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest,
     case UnicodeQuestionMark:
       tsnc_source_consume(source);
 
-			unicodep = tsnc_source_peek(source);
+      unicodep = tsnc_source_peek(source);
       if (unicodep == UnicodeQuestionMark)
         return tsnc_token_create(dest, source, TokenKindQuestionMarkQuestionMark, "??", begpos, begpos + 2);
 
@@ -259,7 +259,7 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest,
     case UnicodeThreePerEmSpace:
     case UnicodeVT:
     case UnicodeZWNBSP:
-			tsnc_source_consume(source);
+      tsnc_source_consume(source);
       return tsnc_tokenize_next(dest, source);
     /**
      * 11.3 Line Terminators
@@ -283,5 +283,5 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest,
       assert(0 && "Not implemented yet");
   }
 
-	return TokenKindInvalid;
+  return TokenKindInvalid;
 }
