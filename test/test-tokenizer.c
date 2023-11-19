@@ -70,7 +70,7 @@ void tsnc_test_tokenizer_single_character_tokens() {
   tsnc_token_free(&token);
 
   tsnc_tokenize_next(&token, &source);
-  exptoken.kind = TSNC_TOKEN_KIND_SEMICOLON;
+  exptoken.kind = TokenKindSemicolon;
   exptoken.begpos = 10; exptoken.endpos = 11; exptoken.str = ";";
   ok(tsnc_token_equal(&token, &exptoken), "token: ;");
   tsnc_token_free(&token);

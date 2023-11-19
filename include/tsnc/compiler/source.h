@@ -1,19 +1,14 @@
 #ifndef TSNC_SOURCE_H
 #define TSNC_SOURCE_H
 #include <stdio.h>
+#include <tsnc/compiler/utf8.h>
 
 /* holds source fields */
 struct tsnc_source {
   /* source path */
   char *path;
-  /* file pointer */
-  FILE *fp;
-  /* holds root token */
-  struct tsnc_token *token;
-  /* holds current token */
-  struct tsnc_token *currtoken;
-  /* utf-8 char position */
-  size_t charpos;
+  /* utf8 character stream */
+  struct tsnc_utf8_charstr charstr;
 };
 
 int tsnc_source_memory_create(struct tsnc_source *dest,
@@ -21,9 +16,8 @@ int tsnc_source_memory_create(struct tsnc_source *dest,
 int tsnc_source_file_create(struct tsnc_source *dest,
     const char *path);
 
-int32_t tsnc_source_peek(struct tsnc_source *source);
-int32_t tsnc_source_ahead(struct tsnc_source *source);
-int32_t tsnc_source_consume(struct tsnc_source *source);
+int tsnc_source_peek(int32_t *dest, struct tsnc_source *source);
+int tsnc_source_getc(int32_t *dest, struct tsnc_source *source);
 
 void tsnc_source_free(struct tsnc_source *source);
 #endif
