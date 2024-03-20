@@ -95,6 +95,10 @@ void tsnc_utf8_seek(struct tsnc_utf8_charstr *str, size_t bytepos, size_t charpo
   str->charpos = charpos;
 }
 
+size_t tsnc_utf8_rread(char *dest, struct tsnc_utf8_charstr *str, size_t count) {
+  return fread(dest, sizeof(char), count, str->srcfp);
+}
+
 void tsnc_utf8_free(struct tsnc_utf8_charstr *str) {
   fclose(str->srcfp);
   str->charpos = 0;

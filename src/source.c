@@ -53,12 +53,20 @@ int tsnc_source_file_create(struct tsnc_source *dest, const char *path) {
   return 1;
 }
 
-int tsnc_source_peek(int32_t *dest, struct tsnc_source *source) {
-  return tsnc_utf8_peek(dest, &source->charstr);
+int tsnc_source_peek(int32_t *dest, struct tsnc_source *src) {
+  return tsnc_utf8_peek(dest, &src->charstr);
 }
 
-int tsnc_source_getc(int32_t *dest, struct tsnc_source *source) {
-  return tsnc_utf8_getc(dest, &source->charstr);
+int tsnc_source_getc(int32_t *dest, struct tsnc_source *src) {
+  return tsnc_utf8_getc(dest, &src->charstr);
+}
+
+void tsnc_source_seek(struct tsnc_source *src, size_t bytepos, size_t charpos) {
+  tsnc_utf8_seek(&src->charstr, bytepos, charpos);
+}
+
+size_t tsnc_source_rread(char *dest, struct tsnc_source *src, size_t count) {
+  return tsnc_utf8_rread(dest, &src->charstr, count);
 }
 
 void tsnc_source_free(struct tsnc_source *source) {

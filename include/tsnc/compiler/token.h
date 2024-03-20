@@ -67,6 +67,8 @@ enum tsnc_token_kind {
   TokenKindGreaterThanGreaterThanGreaterThan,                // >>>
   TokenKindGreaterThanGreaterThanGreaterThanEqual,           // >>>=
 
+  TokenKindNumber,
+
   TokenKindEndOfFile,
   TokenKindInvalid,
 

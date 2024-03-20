@@ -16,6 +16,7 @@ int tsnc_utf8_getc(int32_t *dest, struct tsnc_utf8_charstr *str);
 int tsnc_utf8_peek(int32_t *dest, struct tsnc_utf8_charstr *str);
 void tsnc_utf8_seek(struct tsnc_utf8_charstr *str, size_t bytepos,
     size_t charpos);
+size_t tsnc_utf8_rread(char *dest, struct tsnc_utf8_charstr *str, size_t count);
 void tsnc_utf8_free(struct tsnc_utf8_charstr *str);
 
 #endif

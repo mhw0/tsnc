@@ -38,10 +38,13 @@ enum UnicodeChar {
   UnicodeThree = '3',
   UnicodeFour = '4',
   UnicodeFive = '5',
-  UnicodeSix = '6',
-  UnicodeSeven = '7',
+  UnicodeSix = '6', UnicodeSeven = '7',
   UnicodeEight = '8',
   UnicodeNine = '9',
+
+  Unicodex = 'x',
+  Unicodea = 'a',
+  UnicodeA = 'A',
 
   UnicodeAmpersand = '&',
   UnicodeApostrophe = '\'',
