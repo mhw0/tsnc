@@ -72,6 +72,8 @@ enum tsnc_token_kind {
   TokenKindEndOfFile,
   TokenKindInvalid,
 
+  TokenKindLineTerminator,
+
   TokenKindKeywordAny,
   TokenKindKeywordAs,
   TokenKindKeywordAwait,

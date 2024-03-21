@@ -34,7 +34,7 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest, struct tsnc_sou
 
   switch (unicodep) {
     case EOF:
-      return tsnc_token_create(dest, NULL, TokenKindEndOfFile, "<eof>", begpos, begpos);
+      return tsnc_token_create(dest, NULL, TokenKindEndOfFile, "<EOF>", begpos, begpos);
     case UnicodeColon:
     case UnicodeComma:
     case UnicodeCommercialAt:
@@ -227,21 +227,14 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest, struct tsnc_sou
     /**
      * 11.2 White Space
      *
-     * +--------+------------------------------------+
-     * | U+0009 | CHARACTER TABULATION <TAB>         |
-     * +--------+------------------------------------+
-     * | U+000B | LINE TABULATION <VT>               |
-     * +--------+------------------------------------+
-     * | U+000C | FORM FEED (FF) <FF>                |
-     * +--------+------------------------------------+
-     * | U+0020 | SPACE <SP>                         |
-     * +--------+------------------------------------+
-     * | U+00A0 | NO-BREAK SPACE <NBSP>              |
-     * +--------+------------------------------------+
-     * | U+FEFF | ZERO WIDTH NO-BREAK SPACE <ZWNBSP> |
-     * +--------+------------------------------------+
-     * |  "Zs"  | "Separator, space" <USP>           |
-     * +--------+------------------------------------+
+     * WhiteSpace ::
+     *   <TAB>
+     *   <VT>
+     *   <FF>
+     *   <SP>
+     *   <NBSP>
+     *   <BOM>
+     *   <USP>
      */
     case UnicodeEmQuad:
     case UnicodeEmSpace:
@@ -269,21 +262,32 @@ enum tsnc_token_kind tsnc_tokenize_next(struct tsnc_token *dest, struct tsnc_sou
     /**
      * 11.3 Line Terminators
      *
-     * +--------+--------------------------+
-     * | U+000A | LINE FEED <LF>           |
-     * +--------+--------------------------+
-     * | U+000D | CARRIAGE RETURN <CR>     |
-     * +--------+--------------------------+
-     * | U+2028 | LINE SEPARATOR <LS>      |
-     * +--------+--------------------------+
-     * | U+2029 | PARAGRAPH SEPARATOR <PS> |
-     * +--------+--------------------------+
+     * LineTerminator ::
+     *  <LF>
+     *  <CR>
+     *  <LS>
+     *  <PS>
+     *
+     * LineTerminatorSequence ::
+     *  <LF>
+     *  <CR> [lookahead ∉ <LF> ]
+     *  <LS>
+     *  <PS>
+     *  <CR> <LF>
      */
     case UnicodeLF:
     case UnicodeCR:
     case UnicodeLS:
     case UnicodePS:
-      assert(0 && "Not implemented yet");
+      tsnc_source_getc(NULL, source);
+
+      if (unicodep == UnicodeCR) {
+        tsnc_source_peek(&unicodep, source);
+        if (unicodep == UnicodeLF)
+          return tsnc_token_create(dest, source, TokenKindLineTerminator, "", begpos, begpos + 1); // treat CR+LF as one character
+      }
+
+      return tsnc_token_create(dest, NULL, TokenKindLineTerminator, "", begpos, begpos + 1);
     default:
       assert(0 && "Not implemented yet");
   }
