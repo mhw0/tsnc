@@ -1,4 +1,5 @@
-#include <tsnc/compiler/utf8.h>
+#include <tsnc/utf8.h>
+#include <tsnc/string.h>
 
 /**
  * +-------------------+----------+----------+----------+---------+

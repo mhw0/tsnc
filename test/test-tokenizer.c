@@ -1,6 +1,6 @@
 #include <tap.h>
-#include <tsnc/compiler/tokenizer.h>
-#include <tsnc/compiler/source.h>
+#include <tsnc/tokenizer.h>
+#include <tsnc/source.h>
 #include "test-tokenizer.h"
 
 void tsnc_test_tokenizer_single_character_tokens() {
@@ -339,42 +339,43 @@ void tsnc_test_tokenizer_line_terminators() {
   struct tsnc_source source;
   struct tsnc_token token, exptoken;
 
-  // UnicodeLF = 0x000A,
-  // UnicodeCR = 0x000D,
-  // UnicodeLS = 0x2028,
-  // UnicodePS = 0x2029,
-
-  tsnc_source_memory_create(&source, "\x0A\x0D\xE2\x80\xA8\xE2\x80\xA8\x0D\x0A", -1);
+  /**
+    UnicodeLF = 0x000A,
+    UnicodeCR = 0x000D,
+    UnicodeLS = 0x2028,
+    UnicodePS = 0x2029,
+   */
+  tsnc_source_memory_create(&source, "\x0A\x0D\xE2\x80\xA8\xE2\x80\xA9\x0D\x0A", -1);
 
   tsnc_tokenize_next(&token, &source);
   exptoken.kind = TokenKindLineTerminator;
-  exptoken.begpos = 0; exptoken.endpos = 1; exptoken.str = "";
+  exptoken.begpos = 0; exptoken.endpos = 1; exptoken.str = "<LF>";
   ok(tsnc_token_equal(&token, &exptoken), "token: <LF>");
 
   tsnc_tokenize_next(&token, &source);
   exptoken.kind = TokenKindLineTerminator;
-  exptoken.begpos = 1; exptoken.endpos = 2; exptoken.str = "";
+  exptoken.begpos = 1; exptoken.endpos = 2; exptoken.str = "<CR>";
   ok(tsnc_token_equal(&token, &exptoken), "token: <CR>");
 
   tsnc_tokenize_next(&token, &source);
   exptoken.kind = TokenKindLineTerminator;
-  exptoken.begpos = 2; exptoken.endpos = 3; exptoken.str = "";
+  exptoken.begpos = 2; exptoken.endpos = 3; exptoken.str = "<LS>";
   ok(tsnc_token_equal(&token, &exptoken), "token: <LS>");
 
   tsnc_tokenize_next(&token, &source);
   exptoken.kind = TokenKindLineTerminator;
-  exptoken.begpos = 3; exptoken.endpos = 4; exptoken.str = "";
+  exptoken.begpos = 3; exptoken.endpos = 4; exptoken.str = "<PS>";
   ok(tsnc_token_equal(&token, &exptoken), "token: <PS>");
 
   tsnc_tokenize_next(&token, &source);
   exptoken.kind = TokenKindLineTerminator;
-  exptoken.begpos = 4; exptoken.endpos = 5; exptoken.str = "";
+  exptoken.begpos = 4; exptoken.endpos = 5; exptoken.str = "<CR><LF>";
   ok(tsnc_token_equal(&token, &exptoken), "token: <CR><LF>");
 
   tsnc_tokenize_next(&token, &source);
   exptoken.kind = TokenKindEndOfFile;
   /**
-   * 7.3 Line Terminators: ""The character sequence <CR><LF> is commonly used as a line terminator.
+   * 7.3 Line Terminators: "The character sequence <CR><LF> is commonly used as a line terminator.
    * It should be considered a single character for the purpose of reporting line numbers"
    *
    * TODO(mhw0): begpos and endpos of EOF should be 5 not 6

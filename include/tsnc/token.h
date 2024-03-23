@@ -1,7 +1,7 @@
 #ifndef TSNC_TOKEN_H
 #define TSNC_TOKEN_H
 #include <stdlib.h>
-#include <tsnc/compiler/unicode.h>
+#include <tsnc/unicode.h>
 
 /* token kind */
 enum tsnc_token_kind {

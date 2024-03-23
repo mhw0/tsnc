@@ -1,6 +1,6 @@
 #include <string.h>
-#include <tsnc/compiler/token.h>
-#include <tsnc/compiler/source.h>
+#include <tsnc/token.h>
+#include <tsnc/source.h>
 
 int tsnc_token_equal(struct tsnc_token *left,
     struct tsnc_token *right) {

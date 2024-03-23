@@ -1,14 +1,15 @@
 #ifndef TSNC_SOURCE_H
 #define TSNC_SOURCE_H
 #include <stdio.h>
-#include <tsnc/compiler/utf8.h>
+#include <tsnc/utf8.h>
+#include <tsnc/string.h>
 
 /* holds source fields */
 struct tsnc_source {
   /* source path */
   char *path;
-  /* utf8 character stream */
-  struct tsnc_utf8_charstr charstr;
+  /* character stream */
+  struct tsnc_str str;
 };
 
 int tsnc_source_memory_create(struct tsnc_source *dest,
