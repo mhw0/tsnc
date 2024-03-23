@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <tsnc/tokenizer.h>
-#include <tsnc/utf8.h>
 #include <tsnc/unicode.h>
 
 enum tsnc_token_kind tsnc_token_create(struct tsnc_token *token, struct tsnc_source *source,

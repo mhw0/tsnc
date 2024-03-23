@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <tsnc/source.h>
-#include <tsnc/utf8.h>
 
 int tsnc_source_memory_create(struct tsnc_source *dest, const char *source,
     int len) {
